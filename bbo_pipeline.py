@@ -1,10 +1,10 @@
 """
-Black-Box Optimisation (BBO) Weekly Pipeline & Template
+Black-Box Optimization (BBO) Weekly Pipeline & Template
 Imperial College Capstone Project
 
 This script provides an automated, modular workflow for:
 1. Ingesting function datasets (.npy files).
-2. Comparing Bayesian Optimisation (GP) against ML Regression models (Random Forest, Extra Trees, Polynomial Ridge, Gradient Boosting).
+2. Comparing Bayesian Optimization (GP) against ML Regression models (Random Forest, Extra Trees, Polynomial Ridge, Gradient Boosting).
 3. Computing acquisition functions (EI, UCB) over dense grids (2D) or Latin Hypercube/Monte Carlo candidate samples (3D-8D).
 4. Formatting queries according to project brief guidelines (0.xxxxxx-0.yyyyyy-...).
 5. Generating comprehensive visualisations for tracking weekly progress across all functions and multi-week trajectories.
@@ -183,7 +183,7 @@ def compute_acquisition(gp_model, candidates, current_best_y, y_range, xi_frac=0
     return mean, std, ei, ucb
 
 
-def process_function(func_id):
+def process_function(func_id, week_num=2):
     """
     Executes full modeling, acquisition, formatting, and visualization pipeline for one function.
     """
@@ -233,7 +233,7 @@ def process_function(func_id):
     next_query_pred_std = std[best_cand_idx]
     query_str = format_query_string(next_query_x)
 
-    print(f"\n--- Proposed Query Selection ---")
+    print(f"\n--- Proposed Query Selection (Week {week_num}) ---")
     print(f"Acquisition Method: {acq_name}")
     print(f"Suggested Next Query X: {np.round(next_query_x, 6).tolist()}")
     print(f"Predicted Output y (GP mean): {next_query_pred_mean:.6f} +/- {next_query_pred_std:.6f}")
@@ -241,7 +241,7 @@ def process_function(func_id):
 
     # 4. Generate Visualizations
     fig = plt.figure(figsize=(14, 10))
-    fig.suptitle(f"Function {func_id} ({dim}D) - Week 1 Model Diagnostics & Query Selection", fontsize=16, fontweight='bold')
+    fig.suptitle(f"Function {func_id} ({dim}D) - Week {week_num} Model Diagnostics & Query Selection", fontsize=16, fontweight='bold')
 
     if dim == 2:
         res = grid_shape[0]
@@ -262,9 +262,9 @@ def process_function(func_id):
         Z_mean = mean.reshape(res, res)
         c2 = ax2.contourf(X1, X2, Z_mean, levels=30, cmap='viridis')
         fig.colorbar(c2, ax=ax2, label='Predicted Output (y)')
-        ax2.scatter(X[:, 0], X[:, 1], color='red', marker='o', s=60, edgecolors='black', label='Explored Points')
+        ax2.scatter(X[:, 0], X[:, 1], color='red', marker='o', s=60, edgecolors='black', label=f'Explored Points (n={n_samples})')
         ax2.scatter(current_best_x[0], current_best_x[1], color='gold', marker='*', s=250, edgecolors='black', label=f'Current Max ({current_best_y:.3f})')
-        ax2.scatter(next_query_x[0], next_query_x[1], color='magenta', marker='X', s=250, edgecolors='black', label=f'Next Query')
+        ax2.scatter(next_query_x[0], next_query_x[1], color='magenta', marker='X', s=250, edgecolors='black', label=f'Next Query (W{week_num})')
         ax2.set_xlabel("Dimension 1")
         ax2.set_ylabel("Dimension 2")
         ax2.set_title("2. GP Mean Landscape & Query Location")
@@ -275,7 +275,7 @@ def process_function(func_id):
         Z_ei = ei.reshape(res, res)
         c3 = ax3.contourf(X1, X2, Z_ei, levels=30, cmap='magma')
         fig.colorbar(c3, ax=ax3, label='EI Acquisition Value')
-        ax3.scatter(next_query_x[0], next_query_x[1], color='magenta', marker='X', s=250, edgecolors='black', label='Next Query')
+        ax3.scatter(next_query_x[0], next_query_x[1], color='magenta', marker='X', s=250, edgecolors='black', label=f'Next Query (W{week_num})')
         ax3.set_xlabel("Dimension 1")
         ax3.set_ylabel("Dimension 2")
         ax3.set_title("3. Expected Improvement (EI) Acquisition Map")
@@ -336,7 +336,7 @@ def process_function(func_id):
         ax4.legend(loc='upper right', fontsize=9)
 
     plt.tight_layout()
-    vis_path = os.path.join(VIS_DIR, f"function_{func_id}_week1.png")
+    vis_path = os.path.join(VIS_DIR, f"function_{func_id}_week{week_num}.png")
     plt.savefig(vis_path, dpi=200, bbox_inches='tight')
     plt.close()
     print(f"Saved visualization to {vis_path}")
@@ -357,7 +357,7 @@ def process_function(func_id):
     }
 
 
-def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 1 (Module 12)"):
+def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 2 (Module 13)"):
     """
     Generates and updates a master 2x2 dashboard figure tracking multi-week optimization progress.
     """
@@ -419,7 +419,7 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 
                 y_vals.append(history[w][fid]['best_y'])
             else:
                 y_vals.append(np.nan)
-        ax2.plot(weeks, y_vals, marker='o', linewidth=2, label=fid, color=colors[idx])
+        ax2.plot(weeks, y_vals, marker='o', linewidth=2.2, label=fid, color=colors[idx])
 
     ax2.set_ylabel("Max Output Found y")
     ax2.set_title("2. Weekly Optimization Trajectory (Max Found per Round)", fontweight='bold')
@@ -470,27 +470,29 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 
 
 
 def main():
+    CURRENT_WEEK = 2
+    CURRENT_WEEK_LABEL = f"Week {CURRENT_WEEK} (Module 13)"
     summary_results = []
     for func_id in range(1, 9):
-        res = process_function(func_id)
+        res = process_function(func_id, week_num=CURRENT_WEEK)
         summary_results.append(res)
 
-    json_path = "week1_summary.json"
+    json_path = f"week{CURRENT_WEEK}_summary.json"
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(summary_results, f, indent=2)
 
     # Generate master weekly summary dashboard figure
-    generate_weekly_summary_dashboard(summary_results)
+    generate_weekly_summary_dashboard(summary_results, current_week_label=CURRENT_WEEK_LABEL)
 
     print("\n" + "=" * 80)
-    print("                      WEEK 1 PORTAL SUBMISSION SUMMARY                       ")
+    print(f"                      WEEK {CURRENT_WEEK} PORTAL SUBMISSION SUMMARY                       ")
     print("=" * 80)
     print(f"{'Func':<6} | {'Dim':<4} | {'Current Best y':<16} | {'Submission String (x1-x2-...-xn)'}")
     print("-" * 80)
     for s in summary_results:
         print(f"Func {s['func_id']:<2} | {s['dim']:<4}D | {s['current_best_y']:<16.6f} | {s['submission_string']}")
     print("=" * 80)
-    print("\nSubmission strings saved to week1_summary.json. Visualisations generated in visualizations/")
+    print(f"\nSubmission strings saved to {json_path}. Visualisations generated in visualizations/")
 
 
 if __name__ == "__main__":
