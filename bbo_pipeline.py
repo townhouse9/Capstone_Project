@@ -4,7 +4,7 @@ Imperial College Capstone Project
 
 This script provides an automated, modular workflow for:
 1. Ingesting function datasets (.npy files).
-2. Comparing Bayesian Optimization (GP) against ML Regression models (Random Forest, Extra Trees, Polynomial Ridge, Gradient Boosting).
+2. Comparing Bayesian Optimization (GP) against ML Regression models (Random Forest, Extra Trees, Polynomial Ridge, Gradient Boosting, Neural Network MLP).
 3. Computing acquisition functions (EI, UCB) over dense grids (2D) or Latin Hypercube/Monte Carlo candidate samples (3D-8D).
 4. Formatting queries according to project brief guidelines (0.xxxxxx-0.yyyyyy-...).
 5. Generating comprehensive visualisations for tracking weekly progress across all functions and multi-week trajectories.
@@ -22,6 +22,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import Matern, RBF, ConstantKernel as C
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor, GradientBoostingRegressor
 from sklearn.preprocessing import PolynomialFeatures, StandardScaler
+from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import Pipeline
 from scipy.stats import norm
@@ -103,7 +104,11 @@ def define_candidate_models():
             n_estimators=50,
             max_depth=3,
             random_state=42
-        )
+        ),
+        'Neural Net (MLP)': Pipeline([
+            ('scaler', StandardScaler()),
+            ('mlp', MLPRegressor(hidden_layer_sizes=(64, 32), activation='relu', max_iter=600, alpha=1e-3, random_state=42))
+        ])
     }
 
 
@@ -183,7 +188,7 @@ def compute_acquisition(gp_model, candidates, current_best_y, y_range, xi_frac=0
     return mean, std, ei, ucb
 
 
-def process_function(func_id, week_num=3):
+def process_function(func_id, week_num=4):
     """
     Executes full modeling, acquisition, formatting, and visualization pipeline for one function.
     """
@@ -213,7 +218,7 @@ def process_function(func_id, week_num=3):
     )
     gp_primary.fit(X, y)
 
-    # Alternative RF surrogate for comparison
+    # Neural Network / RF surrogates for comparison and gradient/importance insight
     rf_primary = RandomForestRegressor(n_estimators=150, max_depth=6, random_state=42)
     rf_primary.fit(X, y)
 
@@ -324,7 +329,7 @@ def process_function(func_id, week_num=3):
         dims_labels = [f"Dim {d+1}" for d in range(dim)]
         ax3.bar(dims_labels, rf_imp, color='darkorange', edgecolor='black')
         ax3.set_ylabel("Gini Feature Importance")
-        ax3.set_title("3. Random Forest Feature Importance Profile")
+        ax3.set_title("3. Feature Importance Profile")
 
         # Panel 4: Candidate Acquisition Distribution & Top Query Selection
         ax4 = fig.add_subplot(2, 2, 4)
@@ -357,7 +362,7 @@ def process_function(func_id, week_num=3):
     }
 
 
-def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 3 (Module 14)"):
+def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 4 (Module 15)"):
     """
     Generates and updates a master 2x2 dashboard figure tracking multi-week optimization progress.
     """
@@ -470,8 +475,8 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 
 
 
 def main():
-    CURRENT_WEEK = 3
-    CURRENT_WEEK_LABEL = f"Week {CURRENT_WEEK} (Module 14)"
+    CURRENT_WEEK = 4
+    CURRENT_WEEK_LABEL = f"Week {CURRENT_WEEK} (Module 15)"
     summary_results = []
     for func_id in range(1, 9):
         res = process_function(func_id, week_num=CURRENT_WEEK)
