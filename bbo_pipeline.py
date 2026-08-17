@@ -188,7 +188,7 @@ def compute_acquisition(gp_model, candidates, current_best_y, y_range, xi_frac=0
     return mean, std, ei, ucb
 
 
-def process_function(func_id, week_num=4):
+def process_function(func_id, week_num=5):
     """
     Executes full modeling, acquisition, formatting, and visualization pipeline for one function.
     """
@@ -362,7 +362,7 @@ def process_function(func_id, week_num=4):
     }
 
 
-def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 4 (Module 15)"):
+def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 5 (Module 16)"):
     """
     Generates and updates a master 2x2 dashboard figure tracking multi-week optimization progress.
     """
@@ -475,8 +475,8 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 
 
 
 def main():
-    CURRENT_WEEK = 4
-    CURRENT_WEEK_LABEL = f"Week {CURRENT_WEEK} (Module 15)"
+    CURRENT_WEEK = 5
+    CURRENT_WEEK_LABEL = f"Week {CURRENT_WEEK} (Module 16)"
     summary_results = []
     for func_id in range(1, 9):
         res = process_function(func_id, week_num=CURRENT_WEEK)
