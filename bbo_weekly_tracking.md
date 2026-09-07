@@ -11,62 +11,64 @@ This document serves as the master tracking log for optimising the 8 synthetic b
 
 The master dashboard image above ([weekly_progress_summary.png](file:///c:/Users/sesa625752/OneDrive%20-%20Schneider%20Electric/Imperial_College/Capstone_Project/visualizations/weekly_progress_summary.png)) provides a 4-panel overview:
 1. Current Max vs Predicted Next Query Output: Side-by-side comparison of current maximum y vs GP mean prediction with error bars for Functions 1 to 8.
-2. Weekly Optimization Trajectory: Historical line plot tracking peak output achieved per function across weekly rounds (Week 1 to Week 6).
+2. Weekly Optimization Trajectory: Historical line plot tracking peak output achieved per function across weekly rounds (Week 1 to Week 7).
 3. Surrogate Model CV Performance: Bar chart illustrating the winning surrogate model and 5-Fold CV-MSE score across all 8 functions.
 4. Expected Improvement (EI) Potential Ratio: Normalized gain metric highlighting which functions possess the highest potential for global peak discovery in upcoming submissions.
 
 ---
 
-## 2. Multi-Week Progress & Week 6 Submissions Summary
+## 2. Multi-Week Progress & Week 7 Submissions Summary
 
-### 2.1 Function Progression & Week 6 Submissions Table
+### 2.1 Function Progression & Week 7 Submissions Table
 
-| Function | Dim | Initial to Current Samples | Previous Max y | W5 Evaluated y | Current Best y | Status / Gain | Week 6 Proposed Query Submission (x1-x2-...-xn) |
+| Function | Dim | Initial to Current Samples | Previous Max y | W6 Evaluated y | Current Best y | Status / Gain | Week 7 Proposed Query Submission (x1-x2-...-xn) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| Func 1 | 2D | 10 to 15 | 7.71e-16 | 2.113e-53 | 7.71e-16 | Upper boundary mapped | 0.402010-0.055276 |
-| Func 2 | 2D | 10 to 15 | 0.664342 | 0.556611 | 0.664342 | High plateau confirmed | 0.743719-0.095477 |
-| Func 3 | 3D | 15 to 20 | -0.012927 | -0.004807 | -0.004807 | New Record High | 0.581486-0.424069-0.558637 |
-| Func 4 | 4D | 30 to 35 | 0.367529 | -1.005934 | 0.367529 | Valley edge bounded | 0.316410-0.413201-0.373776-0.391902 |
-| Func 5 | 4D | 20 to 25 | 2921.374749 | 4397.953210 | 4397.953210 | Astronomical Peak (+1476) | 0.969673-0.950156-0.973099-0.939200 |
-| Func 6 | 5D | 20 to 25 | -0.305461 | -0.216645 | -0.216645 | New Record High | 0.465101-0.333351-0.824703-0.988817-0.216636 |
-| Func 7 | 6D | 30 to 35 | 1.364968 | 2.233318 | 2.233318 | Huge Record High (+0.868) | 0.129335-0.330249-0.292549-0.378983-0.292339-0.784849 |
-| Func 8 | 8D | 40 to 45 | 9.929387 | 9.898568 | 9.929387 | High ridge sustained | 0.080328-0.027267-0.110001-0.004206-0.326946-0.299329-0.110341-0.651118 |
+| Func 1 | 2D | 10 to 16 | 7.71e-16 | -1.267e-94 | 7.71e-16 | Upper boundary mapped | 0.542714-0.969849 |
+| Func 2 | 2D | 10 to 16 | 0.664342 | 0.314274 | 0.664342 | High plateau confirmed | 0.628141-0.185930 |
+| Func 3 | 3D | 15 to 21 | -0.004807 | -0.037348 | -0.004807 | Central mode bounded | 0.998561-0.024817-0.835244 |
+| Func 4 | 4D | 30 to 36 | 0.367529 | -0.585530 | 0.367529 | Valley edge bounded | 0.003953-0.938100-0.995633-0.051384 |
+| Func 5 | 4D | 20 to 26 | 4397.953210 | 5893.206247 | 5893.206247 | Astronomical Peak (+1495) | 0.951430-0.994819-0.711723-0.981144 |
+| Func 6 | 5D | 20 to 26 | -0.216645 | -0.580961 | -0.216645 | High plateau mapped | 0.377067-0.365606-0.556370-0.849446-0.330112 |
+| Func 7 | 6D | 30 to 36 | 2.233318 | 2.177521 | 2.233318 | High basin sustained | 0.160714-0.402693-0.443212-0.406155-0.337573-0.767210 |
+| Func 8 | 8D | 40 to 46 | 9.929387 | 9.793209 | 9.929387 | High ridge sustained | 0.143181-0.053741-0.077646-0.278296-0.878902-0.438223-0.234852-0.471378 |
 
 ---
 
-## 3. Week 6 (Module 17) Reflection & Strategy Report (Portal-Ready)
+## 3. Week 7 (Module 18) Reflection & Strategy Report (Portal-Ready)
 
-### Question 1: Progressive Feature Extraction in CNNs vs BBO Strategy
-In Convolutional Neural Networks, progressive feature extraction describes how receptive fields construct understanding hierarchically: initial layers detect low-level edges and color gradients, intermediate layers combine these into local geometric textures, and deeper layers compose textures into complete object representations.
+### Question 1: Prioritized Hyperparameters
+We prioritized hyperparameters governing spatial covariance decay, model regularization, and acquisition exploration pressure:
+1. Gaussian Process Lengthscale Bounds and Smoothness (nu = 1.5 vs 2.5): Lengthscale bounds (1e-2 to 1e2) determine how quickly spatial covariance decays across coordinate distances. Tuning lengthscale bounds and kernel smoothness was prioritized because black-box function response surfaces vary from smooth isotropic basins (Function 8) to sharp non-stationary ridges (Function 5).
+2. Observational Noise Regularization (Alpha = 1e-4): We tuned the GP alpha noise penalty to prevent ill-conditioned matrix inversion during L-BFGS-B marginal likelihood optimization while maintaining numerical stability across multi-scale target values.
+3. Neural Network Architecture and Regularization: For our Neural Network (MLP) surrogate, we tuned hidden layer topology (64, 32), ReLU activations, and L2 weight decay (alpha = 1e-3). Prioritizing L2 regularization prevented overparameterized networks from overfitting to sparse training data.
+4. Acquisition Jitter (xi_frac = 0.01 * y_range): Scaling expected improvement jitter relative to dynamic output range prevented acquisition collapse as peak values expanded into thousands.
 
-This progressive abstraction directly mirrored how we refined our black-box optimization strategy across rounds:
-1. Low-Level Coordinate Gradients (Edges): In initial iterations, we focused on isolated 1D coordinate sensitivity to detect which individual inputs created steep output gradients versus flat baselines.
-2. Mid-Level Interaction Motifs (Textures): Next, we modeled pairwise non-linear interactions across active coordinate dimensions. In Function 5, we discovered that high output values depend on the joint placement of Dimension 2, Dimension 3, and Dimension 4 simultaneously above 0.90. In Function 8, we established that Dimensions 1, 3, and 7 must remain constrained near zero while searching along Dimensions 5 and 6.
-3. High-Level Global Response Surface (Full Objects): Finally, our surrogate models (Gaussian Processes and Neural Networks) constructed a full multi-dimensional response manifold. Operating Expected Improvement acquisition over this holistic manifold enabled us to climb complex high-dimensional ridges, resulting in four record highs this round.
+### Question 2: Evolution of Query Strategy via Tuning
+Hyperparameter tuning transformed our query strategy from unguided, isotropic exploratory sampling into targeted, high-yield ridge exploitation and variance reduction:
+1. Dynamic Lengthscale Adaptation: In early rounds, uncalibrated isotropic kernels over-smoothed local peaks, directing queries toward uninformative central coordinates. Tuning lengthscale bounds allowed Gaussian Processes to capture steep anisotropic slopes. On Function 5, this enabled our query engine to track the ascending upper corner, unlocking successive peaks from 1088.86 to 2062.99, 2304.29, 2921.37, 4397.95, and ultimately y = 5893.21 this round.
+2. Range-Scaled Acquisition: Scaling acquisition jitter dynamically prevented acquisition saturation as function ranges exploded. On Function 8 (8D), tuning lengthscales and bounds focused queries along the narrow active subspace (Dimensions 5 and 6), sustaining peak outputs near y = 9.93.
 
-### Question 2: LeNet / CNN Breakthroughs vs Capstone Incremental Improvements
-Early vision breakthroughs like LeNet (1998) and later modern CNNs proved that combining structured inductive priors (such as local receptive fields, shared convolutional weights, and pooling translation invariance) with end-to-end backpropagation achieved performance leaps that unconstrained fully connected networks could never match.
+### Question 3: Tuning Methods & Observed Trade-Offs
+We implemented a hybrid tuning methodology combining 5-Fold Cross-Validation Grid Benchmarking with Maximum Marginal Likelihood (L-BFGS-B) kernel optimization:
+1. 5-Fold CV Grid Benchmarking: Each round, we automatically evaluated 8 distinct surrogate model families (GP Matérn 2.5, GP Matérn 1.5, GP RBF, Neural Network MLP, Extra Trees, Random Forest, Gradient Boosting, Polynomial Ridge) using K-Fold cross-validation MSE and R-squared metrics.
+2. Maximum Marginal Likelihood GP Tuning: For probabilistic models, kernel lengthscales and signal variances were fitted via 15 restarts of L-BFGS-B optimization.
+Manual hyperparameter tuning was prone to cognitive bias and failed to adapt to expanding datasets. Full grid search across neural network architectures was computationally expensive and risked overfitting tiny datasets (16 to 46 points). Our automated 5-fold cross-validation engine provided the optimal balance: instantaneous CPU execution, deterministic model selection, and zero overfitting risk.
 
-We observed exact parallels in our capstone optimization journey:
-1. Unstructured Sampling vs Incremental Progress: Random or unstructured search yields only slow, incremental improvements because it lacks spatial awareness of the underlying landscape.
-2. Structural Priors vs Breakthrough Leaps: When we embedded structured mathematical priors into our pipeline—such as Matérn covariance kernel smoothness, dynamic range-scaled acquisition jitter, and neural network gradient backpropagation—our surrogate models achieved non-linear performance leaps.
+### Question 4: Growing Dataset Limitations (16 to 46 Points)
+As our evaluation datasets expanded from 10 to 16 points in 2D (Functions 1 and 2) and up to 46 points in 8D (Function 8), tuning revealed three critical structural limitations:
+1. The Curse of Dimensionality and Sparsity: In 2D (16 points), observations begin mapping local surface curvature effectively. In 8D (Function 8, 46 points), sampling remains extremely sparse. Gaussian Process posterior uncertainty remains high across unvisited hypercube volume, making hyperparameter lengthscales sensitive to single outlier evaluations.
+2. Model Capacity vs Small-Sample Overfitting: Multi-Layer Perceptron (MLP) Neural Networks overfit severely on small 2D and 3D datasets, producing negative cross-validation R-squared scores due to overparameterization. However, on Function 6 (5D), MLP achieved the top CV score (CV-MSE = 0.0456, R-squared = 0.715), proving that higher-capacity models outperform GPs only when surfaces exhibit complex non-stationary transitions.
+3. Diminishing Returns Near Peak Optima: On Function 5, outputs scaled exponentially to y = 5893.21. Without target standardization and dynamic jitter tuning, acquisition scores near peak regions collapse, causing diminishing returns unless exploration bounds are actively adjusted.
 
-This structural refinement enabled dramatic surges across rounds: Function 5 escalated from an initial 1088.86 to 2062.99, then 2304.29, then 2921.37, and finally to an astronomical peak of y = 4397.95 this round. Similarly, Function 7 jumped from 1.364968 to a record y = 2.233318. Structured modeling transforms slow incremental exploration into high-yield breakthrough leaps.
+### Question 5: Scaling Tuning to Larger Datasets & Future AI Projects
+As datasets scale beyond hundreds of observations or transition to complex deep learning models, we will evolve our hyperparameter tuning framework across three axes:
+1. Automated Bayesian Optimization for Hyperparameters (AutoML): Rather than discrete grid benchmarking, we will implement Bayesian Optimization (using Optuna or Ray Tune) to tune continuous hyperparameters—such as learning rate schedules, L2 weight penalties, network depth, and dropout rates—treating model validation error itself as a secondary black-box function.
+2. Hyperband and Early Stopping: For large-scale deep learning models, we will apply Hyperband resource allocation to terminate poorly performing hyperparameter configurations early, concentrating compute budget on promising candidates.
+3. Scalable Gaussian Processes and Trust Regions (TuRBO): For high-dimensional BBO (6D to 8D), exact GP matrix inversion scales cubically O(N^3). We will adopt Sparse Gaussian Processes (Inducing Points) and Trust Region Bayesian Optimization (TuRBO) to constrain local optimization bounds and maintain computational efficiency as datasets grow.
 
-### Question 3: CNN Depth, Computational Costs & Overfitting vs Exploration/Exploitation
-1. Deep Exploitation (Specialized CNNs): Deeply exploiting a confirmed high-performing ridge provides rapid, high-magnitude output gains along established gradient paths. Concentrating our query budget on the upper ridge of Function 5 produced our massive 4397.95 peak, while exploiting Function 7 produced our 2.233318 record. However, just as overly deep CNNs risk overfitting to training noise and suffering from vanishing gradients, excessive exploitation risks getting permanently trapped in a sub-optimal local peak while ignoring unvisited global space.
-2. Wide Exploration (Broad Receptive Fields): Broad exploration samples unvisited hypercube quadrants with high posterior variance, ensuring global coverage and guarding against missed global optima. However, like wide shallow networks with high computational overhead, exploration consumes expensive weekly queries without immediately maximizing the top output score.
-We balanced this trade-off using cross-validation surrogate confidence: deeply exploiting high-confidence ridges on surging functions (Functions 5 and 7), while maintaining exploratory sampling on uncertain functions (Functions 1 and 4).
-
-### Question 4: CNN Building Blocks (Convolutions, Pooling, Activations, Loss)
-1. Convolutions (Local Spatial Receptive Fields): Convolutions taught us that data points exert strong localized influence. This reinforced our use of Matérn Gaussian Process kernels, where covariance between observations decays smoothly with Euclidean distance, ensuring local peak structure is preserved without distortion from distant points.
-2. Pooling (Spatial Downsampling): Pooling inspired candidate space binning during Monte Carlo acquisition. By downsampling low-probability regions and concentrating candidate density around high-variance boundaries, we reduced candidate evaluation cost while maintaining high spatial resolution near peaks.
-3. Non-Linear Activations (Threshold Mechanics): Activation functions like ReLU demonstrated that response surfaces undergo sharp phase transitions when coordinate thresholds are crossed. In Function 5 and Function 7, outputs remain modest until coordinates cross critical boundaries (Dimension 3 and Dimension 4 exceeding 0.90), triggering exponential growth.
-4. Loss Functions (Multi-Scale Variance Regularization): Evaluating surrogate prediction error across functions spanning scales from 1e-53 to 4397.95 highlighted the need for target normalization and range-scaled loss penalties to prevent high-magnitude functions from dominating model training.
-
-### Question 5: Edge AI Deployment Challenges (Andrea Dunbar) & Success Benchmarking
-In Andrea Dunbar's discussion of Edge AI deployment, embedding CNNs on low-power, memory-constrained edge hardware requires managing strict engineering trade-offs between inference latency, energy consumption, memory footprint, and classification accuracy.
-
-Reflecting on real-world Edge AI deployment informed how we benchmark success in our capstone project:
-1. Beyond Offline Validation Metrics: Having a surrogate model with a low offline Cross-Validation Mean Squared Error is merely a secondary diagnostic. In BBO, a model is only successful if its acquisition recommendations reliably direct queries to higher observed outputs under strict evaluation limits.
-2. Decision Efficiency Under Hard Constraints: In Edge AI, memory and power are hard constraints. In our capstone, the evaluation budget (one sample per function per week) is our hard constraint. Success is benchmarked by decision efficiency: how effectively our surrogate engine translates sparse historical data into record-breaking physical outputs.
+### Question 6: Real-World Practitioner Mindset
+Real-world industrial AI applications—such as semiconductor design, drug candidate discovery, cloud infrastructure tuning, and physical engine calibration—rarely offer clean analytical equations, unconstrained evaluation budgets, or complete state visibility.
+Operating under strict black-box constraints cultivates an authentic professional practitioner mindset:
+1. Empirical Evidence Over Intuition: Tuning forces reliance on empirical cross-validation telemetry rather than subjective assumptions. When model performance degrades, practitioners trace root causes through log evidence rather than applying superficial fixes.
+2. Resource-Aware Decision Making: Recognizing that physical evaluations are expensive assets teaches practitioners to maximize decision efficiency per query, balancing local exploitation against global uncertainty reduction.
+3. Robust Regularization Over Model Complexity: Practitioners learn that simple, well-regularized models with calibrated uncertainty estimates consistently outperform complex overparameterized architectures when operating under incomplete information.
