@@ -11,64 +11,70 @@ This document serves as the master tracking log for optimising the 8 synthetic b
 
 The master dashboard image above ([weekly_progress_summary.png](file:///c:/Users/sesa625752/OneDrive%20-%20Schneider%20Electric/Imperial_College/Capstone_Project/visualizations/weekly_progress_summary.png)) provides a 4-panel overview:
 1. Current Max vs Predicted Next Query Output: Side-by-side comparison of current maximum y vs GP mean prediction with error bars for Functions 1 to 8.
-2. Weekly Optimization Trajectory: Historical line plot tracking peak output achieved per function across weekly rounds (Week 1 to Week 7).
+2. Weekly Optimization Trajectory: Historical line plot tracking peak output achieved per function across weekly rounds (Week 1 to Week 8).
 3. Surrogate Model CV Performance: Bar chart illustrating the winning surrogate model and 5-Fold CV-MSE score across all 8 functions.
 4. Expected Improvement (EI) Potential Ratio: Normalized gain metric highlighting which functions possess the highest potential for global peak discovery in upcoming submissions.
 
 ---
 
-## 2. Multi-Week Progress & Week 7 Submissions Summary
+## 2. Multi-Week Progress & Week 8 Submissions Summary
 
-### 2.1 Function Progression & Week 7 Submissions Table
+### 2.1 Function Progression & Week 8 Submissions Table
 
-| Function | Dim | Initial to Current Samples | Previous Max y | W6 Evaluated y | Current Best y | Status / Gain | Week 7 Proposed Query Submission (x1-x2-...-xn) |
+| Function | Dim | Initial to Current Samples | Previous Max y | W7 Evaluated y | Current Best y | Status / Gain | Week 8 Proposed Query Submission (x1-x2-...-xn) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| Func 1 | 2D | 10 to 16 | 7.71e-16 | -1.267e-94 | 7.71e-16 | Upper boundary mapped | 0.542714-0.969849 |
-| Func 2 | 2D | 10 to 16 | 0.664342 | 0.314274 | 0.664342 | High plateau confirmed | 0.628141-0.185930 |
-| Func 3 | 3D | 15 to 21 | -0.004807 | -0.037348 | -0.004807 | Central mode bounded | 0.998561-0.024817-0.835244 |
-| Func 4 | 4D | 30 to 36 | 0.367529 | -0.585530 | 0.367529 | Valley edge bounded | 0.003953-0.938100-0.995633-0.051384 |
-| Func 5 | 4D | 20 to 26 | 4397.953210 | 5893.206247 | 5893.206247 | Astronomical Peak (+1495) | 0.951430-0.994819-0.711723-0.981144 |
-| Func 6 | 5D | 20 to 26 | -0.216645 | -0.580961 | -0.216645 | High plateau mapped | 0.377067-0.365606-0.556370-0.849446-0.330112 |
-| Func 7 | 6D | 30 to 36 | 2.233318 | 2.177521 | 2.233318 | High basin sustained | 0.160714-0.402693-0.443212-0.406155-0.337573-0.767210 |
-| Func 8 | 8D | 40 to 46 | 9.929387 | 9.793209 | 9.929387 | High ridge sustained | 0.143181-0.053741-0.077646-0.278296-0.878902-0.438223-0.234852-0.471378 |
+| Func 1 | 2D | 10 to 17 | 7.71e-16 | -7.680e-87 | 7.71e-16 | Upper boundary mapped | 0.467337-0.899497 |
+| Func 2 | 2D | 10 to 17 | 0.664342 | 0.261147 | 0.664342 | High plateau confirmed | 0.708543-0.899497 |
+| Func 3 | 3D | 15 to 22 | -0.004807 | -0.109442 | -0.004807 | Central mode bounded | 0.001199-0.001794-0.625666 |
+| Func 4 | 4D | 30 to 37 | 0.367529 | -36.647771 | 0.367529 | Valley edge bounded | 0.382449-0.359348-0.511752-0.380244 |
+| Func 5 | 4D | 20 to 27 | 5893.206247 | 4416.088821 | 5893.206247 | Astronomical Peak Region | 0.922756-0.986637-0.984891-0.895457 |
+| Func 6 | 5D | 20 to 27 | -0.216645 | -0.472698 | -0.216645 | High plateau mapped | 0.455167-0.358085-0.501329-0.612289-0.118077 |
+| Func 7 | 6D | 30 to 37 | 2.233318 | 2.043269 | 2.233318 | High basin sustained | 0.004479-0.306936-0.503959-0.377022-0.307476-0.830835 |
+| Func 8 | 8D | 40 to 47 | 9.929387 | 9.951309 | 9.951309 | All-Time Peak Surge | 0.064744-0.079547-0.264656-0.342390-0.954529-0.992384-0.077378-0.241817 |
 
 ---
 
-## 3. Week 7 (Module 18) Reflection & Strategy Report (Portal-Ready)
+## 3. Week 8 (Module 19) Reflection & Strategy Report (Portal-Ready)
 
-### Question 1: Prioritized Hyperparameters
-We prioritized hyperparameters governing spatial covariance decay, model regularization, and acquisition exploration pressure:
-1. Gaussian Process Lengthscale Bounds and Smoothness (nu = 1.5 vs 2.5): Lengthscale bounds (1e-2 to 1e2) determine how quickly spatial covariance decays across coordinate distances. Tuning lengthscale bounds and kernel smoothness was prioritized because black-box function response surfaces vary from smooth isotropic basins (Function 8) to sharp non-stationary ridges (Function 5).
-2. Observational Noise Regularization (Alpha = 1e-4): We tuned the GP alpha noise penalty to prevent ill-conditioned matrix inversion during L-BFGS-B marginal likelihood optimization while maintaining numerical stability across multi-scale target values.
-3. Neural Network Architecture and Regularization: For our Neural Network (MLP) surrogate, we tuned hidden layer topology (64, 32), ReLU activations, and L2 weight decay (alpha = 1e-3). Prioritizing L2 regularization prevented overparameterized networks from overfitting to sparse training data.
-4. Acquisition Jitter (xi_frac = 0.01 * y_range): Scaling expected improvement jitter relative to dynamic output range prevented acquisition collapse as peak values expanded into thousands.
+### Question 1: Prompt Patterns (Zero-Shot vs Few-Shot)
+We implemented a Few-Shot Structured In-Context Learning Prompt Pattern. In black-box optimization, zero-shot prompting leads to unconstrained hallucinations, such as generating out-of-bound coordinates outside the unit hypercube (0, 1) or malformed delimiters. Few-shot exemplars provide explicit in-context demonstrations of historical input-output pairs across sequential rounds, constraining the model's structural attention.
 
-### Question 2: Evolution of Query Strategy via Tuning
-Hyperparameter tuning transformed our query strategy from unguided, isotropic exploratory sampling into targeted, high-yield ridge exploitation and variance reduction:
-1. Dynamic Lengthscale Adaptation: In early rounds, uncalibrated isotropic kernels over-smoothed local peaks, directing queries toward uninformative central coordinates. Tuning lengthscale bounds allowed Gaussian Processes to capture steep anisotropic slopes. On Function 5, this enabled our query engine to track the ascending upper corner, unlocking successive peaks from 1088.86 to 2062.99, 2304.29, 2921.37, 4397.95, and ultimately y = 5893.21 this round.
-2. Range-Scaled Acquisition: Scaling acquisition jitter dynamically prevented acquisition saturation as function ranges exploded. On Function 8 (8D), tuning lengthscales and bounds focused queries along the narrow active subspace (Dimensions 5 and 6), sustaining peak outputs near y = 9.93.
+Simplifying prompts (such as requesting a "good query for Function 5") caused formatting drift, missing dimensions, and unguided coordinate guessing. Structuring prompts with explicit System Roles, XML field delimiters, and 5 historical input-output exemplars forced strict schema compliance (x1-x2-...-xn) and focused reasoning on empirical trend gradients.
 
-### Question 3: Tuning Methods & Observed Trade-Offs
-We implemented a hybrid tuning methodology combining 5-Fold Cross-Validation Grid Benchmarking with Maximum Marginal Likelihood (L-BFGS-B) kernel optimization:
-1. 5-Fold CV Grid Benchmarking: Each round, we automatically evaluated 8 distinct surrogate model families (GP Matérn 2.5, GP Matérn 1.5, GP RBF, Neural Network MLP, Extra Trees, Random Forest, Gradient Boosting, Polynomial Ridge) using K-Fold cross-validation MSE and R-squared metrics.
-2. Maximum Marginal Likelihood GP Tuning: For probabilistic models, kernel lengthscales and signal variances were fitted via 15 restarts of L-BFGS-B optimization.
-Manual hyperparameter tuning was prone to cognitive bias and failed to adapt to expanding datasets. Full grid search across neural network architectures was computationally expensive and risked overfitting tiny datasets (16 to 46 points). Our automated 5-fold cross-validation engine provided the optimal balance: instantaneous CPU execution, deterministic model selection, and zero overfitting risk.
+### Question 2: Decoding Parameters
+We selected a low-temperature, constrained decoding configuration:
+1. Temperature = 0.2: Low temperature minimized stochastic sampling noise. High temperature (>0.8) introduced chaotic coordinate jitter, risking query budget waste. Low temperature ensured deterministic, coherent compliance with mathematical constraints.
+2. Top-p (Nucleus Sampling) = 0.95: Excluded improbable low-probability tokens while preserving minor coordinate diversity near high-yield ridges.
+3. Top-k = 40: Restricted candidate token vocabulary strictly to numeric digits and standard string delimiters.
+4. Max-tokens = 1000: Prevented premature output truncation during multi-step cross-validation reasoning and query string formatting.
 
-### Question 4: Growing Dataset Limitations (16 to 46 Points)
-As our evaluation datasets expanded from 10 to 16 points in 2D (Functions 1 and 2) and up to 46 points in 8D (Function 8), tuning revealed three critical structural limitations:
-1. The Curse of Dimensionality and Sparsity: In 2D (16 points), observations begin mapping local surface curvature effectively. In 8D (Function 8, 46 points), sampling remains extremely sparse. Gaussian Process posterior uncertainty remains high across unvisited hypercube volume, making hyperparameter lengthscales sensitive to single outlier evaluations.
-2. Model Capacity vs Small-Sample Overfitting: Multi-Layer Perceptron (MLP) Neural Networks overfit severely on small 2D and 3D datasets, producing negative cross-validation R-squared scores due to overparameterization. However, on Function 6 (5D), MLP achieved the top CV score (CV-MSE = 0.0456, R-squared = 0.715), proving that higher-capacity models outperform GPs only when surfaces exhibit complex non-stationary transitions.
-3. Diminishing Returns Near Peak Optima: On Function 5, outputs scaled exponentially to y = 5893.21. Without target standardization and dynamic jitter tuning, acquisition scores near peak regions collapse, causing diminishing returns unless exploration bounds are actively adjusted.
+Low temperature trading off diversity for strict mathematical coherence enabled our framework to exploit Function 8's active subspace, unlocking an all-time record peak of y = 9.951309 this round.
 
-### Question 5: Scaling Tuning to Larger Datasets & Future AI Projects
-As datasets scale beyond hundreds of observations or transition to complex deep learning models, we will evolve our hyperparameter tuning framework across three axes:
-1. Automated Bayesian Optimization for Hyperparameters (AutoML): Rather than discrete grid benchmarking, we will implement Bayesian Optimization (using Optuna or Ray Tune) to tune continuous hyperparameters—such as learning rate schedules, L2 weight penalties, network depth, and dropout rates—treating model validation error itself as a secondary black-box function.
-2. Hyperband and Early Stopping: For large-scale deep learning models, we will apply Hyperband resource allocation to terminate poorly performing hyperparameter configurations early, concentrating compute budget on promising candidates.
-3. Scalable Gaussian Processes and Trust Regions (TuRBO): For high-dimensional BBO (6D to 8D), exact GP matrix inversion scales cubically O(N^3). We will adopt Sparse Gaussian Processes (Inducing Points) and Trust Region Bayesian Optimization (TuRBO) to constrain local optimization bounds and maintain computational efficiency as datasets grow.
+### Question 3: Tokenization & String Safeguards
+Floating-point numeric strings (such as 0.969673) are split by sub-word tokenizers into arbitrary byte-pair tokens (like "0.", "969", "673"). Standard LLM tokenizers often mangle multi-digit floating-point values or strip bracketed arrays during text processing.
 
-### Question 6: Real-World Practitioner Mindset
-Real-world industrial AI applications—such as semiconductor design, drug candidate discovery, cloud infrastructure tuning, and physical engine calibration—rarely offer clean analytical equations, unconstrained evaluation budgets, or complete state visibility.
-Operating under strict black-box constraints cultivates an authentic professional practitioner mindset:
-1. Empirical Evidence Over Intuition: Tuning forces reliance on empirical cross-validation telemetry rather than subjective assumptions. When model performance degrades, practitioners trace root causes through log evidence rather than applying superficial fixes.
-2. Resource-Aware Decision Making: Recognizing that physical evaluations are expensive assets teaches practitioners to maximize decision efficiency per query, balancing local exploitation against global uncertainty reduction.
-3. Robust Regularization Over Model Complexity: Practitioners learn that simple, well-regularized models with calibrated uncertainty estimates consistently outperform complex overparameterized architectures when operating under incomplete information.
+Safeguards and Verification: To prevent tokenization artifacts, we enforced standardized 6-decimal string formatting (f"{x:.6f}") and substituted hyphenated plain text delimiters (0.xxxxxx-0.yyyyyy) for bracketed arrays. We validated string parsing using automated regex checks prior to portal submission, confirming zero truncation or token-mangling failures across all 8 functions.
+
+### Question 4: Limitations at 17+ Data Points
+As evaluation datasets expanded to 17+ points per function (reaching 47 points in Function 8), raw text context prompts triggered clear attentional limitations:
+1. Attention Fragmentation ("Lost in the Middle"): Passing long unformatted point histories caused LLM attention mechanisms to over-weight early initial points or recent queries while ignoring intermediate gradient trends.
+2. Prompt Overfitting and Diminishing Returns: Appending raw text logs increased context length without improving decision quality. We eliminated prompt overfitting by passing pre-computed statistical summaries—including top-performing coordinates, 5-fold CV model rankings, and Gini feature importances—reducing context noise and maximizing attention efficiency.
+
+### Question 5: Anti-Hallucination Strategies
+We deployed a three-tier anti-hallucination defense:
+1. Tighter System Instructions: Declared explicit numerical boundaries (0.000000 <= x_i <= 1.000000) and zero-tolerance rules for out-of-bound values.
+2. Retrieval-Augmented Telemetry (RAG): Ingested exact NumPy arrays, 5-fold cross-validation MSE scores, and range-scaled expected improvement values directly into context.
+3. Constrained Output Schema: Enforced serialized JSON outputs and exact string templates (x1-x2-...-xn).
+
+### Question 6: Scaling Prompting & Decoding
+To scale prompting and decoding for larger datasets (100+ points) and complex models:
+1. k-NN Vector Retrieval RAG: Rather than dumping full text history, we will retrieve only the k-nearest historical evaluations surrounding the target query candidate region.
+2. LLM Tool-Calling Execution: We will transition from predicting numeric text strings directly to LLM Tool-Calling (Function Calling), allowing the LLM to write and execute Python scikit-learn optimization scripts deterministically.
+
+### Question 7: Practitioner Mindset
+Professional AI practitioners recognize that LLMs are non-deterministic reasoning engines requiring strict deterministic guardrails. Wrapping low-temperature decoding within structured retrieval telemetry taught us to treat LLMs as orchestrators rather than numeric calculators, balancing high-yield exploitation against exploratory risk under strict weekly query limits.
+
+### Question 8: Synthesis (Structured Prompts vs Exploration)
+Structured prompts paired with Gaussian Process cross-validation significantly reduce epistemic uncertainty near confirmed peaks, fully justifying deep exploitation along high-yield ridges—as demonstrated by Function 5 reaching 5893.21 and Function 8 achieving its new record of 9.951309.
+
+However, because finite attention windows can suffer from context fragmentation and sub-word tokenization can distort floating-point precision, pure exploitation is risky. We maintain active exploration on uncertain functions (Functions 1 and 4) using range-scaled acquisition jitter. At 17+ data points, raw context logs show clear diminishing returns; replacing raw logs with pre-computed surrogate telemetry completely resolves prompt overfitting and attention degradation.

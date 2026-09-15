@@ -404,5 +404,63 @@
       "best_model": "GP (Matern 2.5)",
       "cv_mse": 0.06070458490166073
     }
+  },
+  "Week 8 (Module 19)": {
+    "Func 1": {
+      "best_y": 7.710875114502849e-16,
+      "pred_mean": 0.00010807079027638384,
+      "pred_std": 0.0007553192971239573,
+      "best_model": "Polynomial Ridge",
+      "cv_mse": 9.505262125923126e-07
+    },
+    "Func 2": {
+      "best_y": 0.6643418925557312,
+      "pred_mean": 0.4553760409957252,
+      "pred_std": 0.18126795100281412,
+      "best_model": "Gradient Boosting",
+      "cv_mse": 0.02382793913829974
+    },
+    "Func 3": {
+      "best_y": -0.0048070652277623915,
+      "pred_mean": 0.029300309898658963,
+      "pred_std": 0.036284160711296115,
+      "best_model": "Extra Trees",
+      "cv_mse": 0.005094564706880531
+    },
+    "Func 4": {
+      "best_y": 0.36752865304022864,
+      "pred_mean": 0.3492529353640297,
+      "pred_std": 0.2570485329359819,
+      "best_model": "GP (Matern 1.5 ARD)",
+      "cv_mse": 5.16860879616493
+    },
+    "Func 5": {
+      "best_y": 5893.206247325308,
+      "pred_mean": 6453.213673841672,
+      "pred_std": 157.85655197620136,
+      "best_model": "Extra Trees",
+      "cv_mse": 560392.8582311679
+    },
+    "Func 6": {
+      "best_y": -0.21664495397110217,
+      "pred_mean": -0.2115033152899235,
+      "pred_std": 0.05542756143691661,
+      "best_model": "Neural Net (MLP)",
+      "cv_mse": 0.040663723507802764
+    },
+    "Func 7": {
+      "best_y": 2.233317600255839,
+      "pred_mean": 2.2350380378651153,
+      "pred_std": 0.08644712955020921,
+      "best_model": "Extra Trees",
+      "cv_mse": 0.17343679776499582
+    },
+    "Func 8": {
+      "best_y": 9.9513094736056,
+      "pred_mean": 10.016831162284863,
+      "pred_std": 0.024891791012140778,
+      "best_model": "GP (Matern 2.5 ARD)",
+      "cv_mse": 0.02169644246534061
+    }
   }
 }

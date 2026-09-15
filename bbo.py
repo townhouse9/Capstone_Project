@@ -1,17 +1,21 @@
 """
-Black-Box Optimization (BBO) Weekly Pipeline & Template
-Imperial College Capstone Project
+Black-Box Optimization (BBO) Unified Master Engine
+Imperial College London - Capstone Project
 
-This script provides an automated, modular workflow for:
-1. Ingesting function datasets (.npy files).
-2. Comparing Bayesian Optimization (GP) against ML Regression models (Random Forest, Extra Trees, Polynomial Ridge, Gradient Boosting, Neural Network MLP).
-3. Computing acquisition functions (EI, UCB) over dense grids (2D) or Latin Hypercube/Monte Carlo candidate samples (3D-8D).
-4. Formatting queries according to project brief guidelines (0.xxxxxx-0.yyyyyy-...).
-5. Generating comprehensive visualisations for tracking weekly progress across all functions and multi-week trajectories.
+This script incorporates advanced, battle-tested enhancements while preserving 
+complete alignment with our multi-week progression (Weeks 1-8):
+1. Anisotropic Gaussian Processes (ARD - Automatic Relevance Determination) for dimension-specific lengthscales.
+2. Adaptive Surrogate Selection: Selects the optimal GP kernel (Matern 2.5, Matern 1.5, RBF) per function based on 5-Fold CV MSE.
+3. Hybrid Candidate Generation: Space-filling Latin Hypercube Sampling (LHS via scipy.stats.qmc) combined with local Gaussian perturbation around top historical evaluations (TuRBO-inspired local exploitation).
+4. Distance De-duplication: Enforces minimum Euclidean distance from evaluated points to prevent redundant query waste.
+5. Strict Bounds & Formatting: Clips candidates to [0, 1]^d and formats strictly as 0.xxxxxx-0.yyyyyy-...
+6. Automated Multi-Week Telemetry & Master Dashboard generation.
 """
 
 import os
+import sys
 import json
+import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -25,25 +29,24 @@ from sklearn.preprocessing import PolynomialFeatures, StandardScaler
 from sklearn.neural_network import MLPRegressor
 from sklearn.linear_model import Ridge
 from sklearn.pipeline import Pipeline
-from scipy.stats import norm
+from scipy.stats import norm, qmc
+from scipy.spatial.distance import cdist
 import warnings
 from sklearn.exceptions import ConvergenceWarning
 
 warnings.filterwarnings('ignore', category=ConvergenceWarning)
 warnings.filterwarnings('ignore', category=UserWarning)
 
-# Ensure output directory exists
 VIS_DIR = "visualizations"
 os.makedirs(VIS_DIR, exist_ok=True)
 
 
 def format_query_string(x):
     """
-    Formats a 1D numpy array of coordinates into the required brief format:
-    x1-x2-x3-...-xn with 6 decimal places starting with '0.'.
-    Example: 0.123456-0.654321
+    Formats coordinates strictly to 6 decimal places starting with '0.':
+    x1-x2-...-xn.
     """
-    formatted_coords = [f"{val:.6f}" for val in x]
+    formatted_coords = [f"{np.clip(val, 0.0, 1.0):.6f}" for val in x]
     return "-".join(formatted_coords)
 
 
@@ -61,36 +64,42 @@ def load_function_data(func_id, base_dir="."):
     return X, y
 
 
-def define_candidate_models():
-    """Returns a dictionary of candidate surrogate models to evaluate."""
+def define_candidate_models(dim):
+    """
+    Defines surrogate models with ARD (dimension-specific lengthscales)
+    for Gaussian Processes, plus tree ensembles, polynomial ridge, and MLP.
+    """
+    init_ls = np.ones(dim) * 0.2
+    ls_bounds = (1e-2, 1e2)
+
     return {
-        'GP (Matern 2.5)': GaussianProcessRegressor(
-            kernel=C(1.0) * Matern(length_scale=0.2, length_scale_bounds=(1e-2, 1e2), nu=2.5),
+        'GP (Matern 2.5 ARD)': GaussianProcessRegressor(
+            kernel=C(1.0) * Matern(length_scale=init_ls, length_scale_bounds=ls_bounds, nu=2.5),
             alpha=1e-4,
             normalize_y=True,
-            n_restarts_optimizer=10,
+            n_restarts_optimizer=5,
             random_state=42
         ),
-        'GP (Matern 1.5)': GaussianProcessRegressor(
-            kernel=C(1.0) * Matern(length_scale=0.2, length_scale_bounds=(1e-2, 1e2), nu=1.5),
+        'GP (Matern 1.5 ARD)': GaussianProcessRegressor(
+            kernel=C(1.0) * Matern(length_scale=init_ls, length_scale_bounds=ls_bounds, nu=1.5),
             alpha=1e-4,
             normalize_y=True,
-            n_restarts_optimizer=10,
+            n_restarts_optimizer=5,
             random_state=42
         ),
-        'GP (RBF)': GaussianProcessRegressor(
-            kernel=C(1.0) * RBF(length_scale=0.2, length_scale_bounds=(1e-2, 1e2)),
+        'GP (RBF ARD)': GaussianProcessRegressor(
+            kernel=C(1.0) * RBF(length_scale=init_ls, length_scale_bounds=ls_bounds),
             alpha=1e-4,
             normalize_y=True,
-            n_restarts_optimizer=10,
+            n_restarts_optimizer=5,
             random_state=42
         ),
-        'Random Forest': RandomForestRegressor(
+        'Extra Trees': ExtraTreesRegressor(
             n_estimators=100,
             max_depth=5,
             random_state=42
         ),
-        'Extra Trees': ExtraTreesRegressor(
+        'Random Forest': RandomForestRegressor(
             n_estimators=100,
             max_depth=5,
             random_state=42
@@ -107,22 +116,23 @@ def define_candidate_models():
         ),
         'Neural Net (MLP)': Pipeline([
             ('scaler', StandardScaler()),
-            ('mlp', MLPRegressor(hidden_layer_sizes=(64, 32), activation='relu', max_iter=600, alpha=1e-3, random_state=42))
+            ('mlp', MLPRegressor(hidden_layer_sizes=(64, 32), activation='relu', max_iter=500, alpha=1e-3, random_state=42))
         ])
     }
 
 
-def evaluate_models_cv(X, y, n_splits=5):
+def evaluate_models_cv(X, y, dim, n_splits=5):
     """
-    Evaluates all candidate surrogate models using K-Fold Cross-Validation.
-    Returns a DataFrame sorted by Mean Squared Error (lower is better).
+    Evaluates candidate models via K-Fold Cross-Validation.
+    Returns sorted DataFrame by Mean Squared Error.
     """
-    models = define_candidate_models()
+    models = define_candidate_models(dim)
     n_samples = len(X)
     actual_splits = min(n_splits, n_samples)
     kf = KFold(n_splits=actual_splits, shuffle=True, random_state=42)
 
     results = []
+
     for name, model in models.items():
         mse_list = []
         r2_list = []
@@ -138,25 +148,27 @@ def evaluate_models_cv(X, y, n_splits=5):
                     r2_list.append(r2_score(y_te, preds))
                 else:
                     r2_list.append(0.0)
-            except Exception as e:
+            except Exception:
                 mse_list.append(np.nan)
                 r2_list.append(np.nan)
 
         results.append({
             'Model': name,
-            'CV_MSE_Mean': np.nanmean(mse_list),
-            'CV_MSE_Std': np.nanstd(mse_list),
-            'CV_R2_Mean': np.nanmean(r2_list)
+            'CV_MSE_Mean': float(np.nanmean(mse_list)),
+            'CV_MSE_Std': float(np.nanstd(mse_list)),
+            'CV_R2_Mean': float(np.nanmean(r2_list))
         })
 
     df = pd.DataFrame(results).sort_values('CV_MSE_Mean').reset_index(drop=True)
     return df
 
 
-def generate_candidate_points(dim, num_samples=30000, res_2d=200):
+def generate_candidate_points_hybrid(X_history, dim, num_samples=30000, res_2d=200):
     """
     Generates candidate search points in [0, 1]^dim.
-    Uses dense grid for 2D, and uniform random candidate grid for >=3D.
+    For 2D: Dense grid.
+    For >=3D: Latin Hypercube Sampling (LHS) + Local Gaussian perturbations
+              around top historical evaluations (TuRBO-style exploitation).
     """
     if dim == 2:
         x_lin = np.linspace(0.0, 1.0, res_2d)
@@ -165,15 +177,45 @@ def generate_candidate_points(dim, num_samples=30000, res_2d=200):
         grid_shape = (res_2d, res_2d)
         return candidates, grid_shape
     else:
+        # 1. Global Latin Hypercube Samples (Space-filling exploration)
+        lhs_sampler = qmc.LatinHypercube(d=dim, seed=42)
+        n_lhs = int(num_samples * 0.7)
+        candidates_lhs = lhs_sampler.random(n=n_lhs)
+
+        # 2. Local Perturbations around Top Historical Performers (Focused exploitation)
+        n_local = num_samples - n_lhs
         rng = np.random.RandomState(42)
-        candidates = rng.uniform(0.0, 1.0, size=(num_samples, dim))
+        n_top = min(3, len(X_history))
+        top_points = X_history[:n_top]
+
+        local_candidates = []
+        points_per_top = n_local // n_top
+        for pt in top_points:
+            scale = rng.choice([0.015, 0.04, 0.08], size=(points_per_top, 1))
+            noise = rng.normal(0, 1, size=(points_per_top, dim)) * scale
+            perturbed = np.clip(pt + noise, 0.0, 1.0)
+            local_candidates.append(perturbed)
+
+        candidates = np.vstack([candidates_lhs] + local_candidates)
         return candidates, None
+
+
+def filter_min_distance(candidates, X_history, min_dist=0.005):
+    """
+    Filters out candidates that are within min_dist of any historical point
+    to avoid re-sampling previously evaluated locations.
+    """
+    dists = cdist(candidates, X_history)
+    min_dists = np.min(dists, axis=1)
+    valid_mask = min_dists >= min_dist
+    if np.sum(valid_mask) > 100:
+        return candidates[valid_mask]
+    return candidates
 
 
 def compute_acquisition(gp_model, candidates, current_best_y, y_range, xi_frac=0.01, beta=2.576):
     """
-    Computes Expected Improvement (EI) and Upper Confidence Bound (UCB) for GP model predictions.
-    Scales xi relative to the dynamic output range y_range.
+    Computes Expected Improvement (EI) and Upper Confidence Bound (UCB).
     """
     mean, std = gp_model.predict(candidates, return_std=True)
     xi = xi_frac * y_range
@@ -188,43 +230,75 @@ def compute_acquisition(gp_model, candidates, current_best_y, y_range, xi_frac=0
     return mean, std, ei, ucb
 
 
+def select_best_gp_surrogate(cv_df, dim):
+    """
+    Dynamically picks the best performing GP kernel from CV benchmarking.
+    Fits with 15 restarts for final surrogate model.
+    """
+    init_ls = np.ones(dim) * 0.2
+    ls_bounds = (1e-2, 1e2)
+
+    gp_map = {
+        'GP (Matern 2.5 ARD)': GaussianProcessRegressor(
+            kernel=C(1.0) * Matern(length_scale=init_ls, length_scale_bounds=ls_bounds, nu=2.5),
+            alpha=1e-4, normalize_y=True, n_restarts_optimizer=15, random_state=42
+        ),
+        'GP (Matern 1.5 ARD)': GaussianProcessRegressor(
+            kernel=C(1.0) * Matern(length_scale=init_ls, length_scale_bounds=ls_bounds, nu=1.5),
+            alpha=1e-4, normalize_y=True, n_restarts_optimizer=15, random_state=42
+        ),
+        'GP (RBF ARD)': GaussianProcessRegressor(
+            kernel=C(1.0) * RBF(length_scale=init_ls, length_scale_bounds=ls_bounds),
+            alpha=1e-4, normalize_y=True, n_restarts_optimizer=15, random_state=42
+        )
+    }
+
+    for _, row in cv_df.iterrows():
+        m_name = row['Model']
+        if m_name in gp_map:
+            return m_name, gp_map[m_name]
+
+    return 'GP (Matern 2.5 ARD)', gp_map['GP (Matern 2.5 ARD)']
+
+
 def process_function(func_id, week_num=8):
     """
-    Executes full modeling, acquisition, formatting, and visualization pipeline for one function.
+    Executes enhanced modeling, candidate filtering, acquisition, and visual export for a function.
     """
     X, y = load_function_data(func_id)
     dim = X.shape[1]
     n_samples = len(X)
-    current_best_idx = np.argmax(y)
-    current_best_y = y[current_best_idx]
-    current_best_x = X[current_best_idx]
+    
+    sort_order = np.argsort(-y)
+    X_sorted = X[sort_order]
+    y_sorted = y[sort_order]
+
+    current_best_y = float(y_sorted[0])
+    current_best_x = X_sorted[0]
     y_range = max(np.max(y) - np.min(y), 1e-6)
 
-    print(f"\n==================== FUNCTION {func_id} (Dimension: {dim}D, Samples: {n_samples}) ====================")
-    print(f"Current Max y: {current_best_y:.6f} at X: {np.round(current_best_x, 6).tolist()}")
+    print(f"\n==================== FUNCTION {func_id} (Dimension: {dim}D, Samples: {n_samples}) ====================", flush=True)
+    print(f"Current Max y: {current_best_y:.6f} at X: {np.round(current_best_x, 6).tolist()}", flush=True)
 
-    # 1. Model Evaluation via CV
-    cv_df = evaluate_models_cv(X, y)
-    print("\n--- Cross-Validation Model Comparison ---")
-    print(cv_df.to_string(index=False))
+    # 1. 5-Fold Cross-Validation Model Comparison
+    cv_df = evaluate_models_cv(X, y, dim)
+    print("\n--- Cross-Validation Model Comparison ---", flush=True)
+    print(cv_df.to_string(index=False), flush=True)
 
-    # 2. Primary GP Model fitting for BO
-    gp_primary = GaussianProcessRegressor(
-        kernel=C(1.0) * Matern(length_scale=0.2, length_scale_bounds=(1e-2, 1e2), nu=2.5),
-        alpha=1e-4,
-        normalize_y=True,
-        n_restarts_optimizer=15,
-        random_state=42
-    )
-    gp_primary.fit(X, y)
+    # 2. Fit Selected Best GP Surrogate
+    chosen_gp_name, gp_surrogate = select_best_gp_surrogate(cv_df, dim)
+    gp_surrogate.fit(X, y)
+    print(f"\nPrimary Bayesian Surrogate: {chosen_gp_name}", flush=True)
 
-    # Neural Network / RF surrogates for comparison and gradient/importance insight
-    rf_primary = RandomForestRegressor(n_estimators=150, max_depth=6, random_state=42)
-    rf_primary.fit(X, y)
+    rf_aux = RandomForestRegressor(n_estimators=150, max_depth=6, random_state=42)
+    rf_aux.fit(X, y)
 
-    # 3. Candidate search & Acquisition
-    candidates, grid_shape = generate_candidate_points(dim)
-    mean, std, ei, ucb = compute_acquisition(gp_primary, candidates, current_best_y, y_range)
+    # 3. Hybrid Candidate Generation & Distance De-duplication
+    candidates, grid_shape = generate_candidate_points_hybrid(X_sorted, dim)
+    candidates = filter_min_distance(candidates, X, min_dist=0.005)
+
+    # 4. Acquisition Calculation
+    mean, std, ei, ucb = compute_acquisition(gp_surrogate, candidates, current_best_y, y_range)
 
     if np.max(ei) > 1e-12:
         best_cand_idx = np.argmax(ei)
@@ -234,17 +308,17 @@ def process_function(func_id, week_num=8):
         acq_name = "Upper Confidence Bound (UCB)"
 
     next_query_x = candidates[best_cand_idx]
-    next_query_pred_mean = mean[best_cand_idx]
-    next_query_pred_std = std[best_cand_idx]
+    next_query_pred_mean = float(mean[best_cand_idx])
+    next_query_pred_std = float(std[best_cand_idx])
     query_str = format_query_string(next_query_x)
 
-    print(f"\n--- Proposed Query Selection (Week {week_num}) ---")
-    print(f"Acquisition Method: {acq_name}")
-    print(f"Suggested Next Query X: {np.round(next_query_x, 6).tolist()}")
-    print(f"Predicted Output y (GP mean): {next_query_pred_mean:.6f} +/- {next_query_pred_std:.6f}")
-    print(f"Formatted Submission String: {query_str}")
+    print(f"\n--- Proposed Query Selection (Week {week_num}) ---", flush=True)
+    print(f"Acquisition Method: {acq_name}", flush=True)
+    print(f"Suggested Next Query X: {np.round(next_query_x, 6).tolist()}", flush=True)
+    print(f"Predicted Output y: {next_query_pred_mean:.6f} +/- {next_query_pred_std:.6f}", flush=True)
+    print(f"Formatted Submission String: {query_str}", flush=True)
 
-    # 4. Generate Visualizations
+    # 5. Generate Visual Diagnostics
     fig = plt.figure(figsize=(14, 10))
     fig.suptitle(f"Function {func_id} ({dim}D) - Week {week_num} Model Diagnostics & Query Selection", fontsize=16, fontweight='bold')
 
@@ -253,19 +327,19 @@ def process_function(func_id, week_num=8):
 
         # Panel 1: CV Model Comparison
         ax1 = fig.add_subplot(2, 2, 1)
-        models_names = cv_df['Model']
-        mses = cv_df['CV_MSE_Mean']
-        ax1.barh(models_names, mses, color='skyblue', edgecolor='black')
+        ax1.barh(cv_df['Model'], cv_df['CV_MSE_Mean'], color='skyblue', edgecolor='black')
         ax1.set_xlabel("CV Mean Squared Error (Lower is Better)")
         ax1.set_title("1. Model Cross-Validation Performance")
         ax1.invert_yaxis()
 
-        # Panel 2: Predicted Mean Surface & Query Point
+        # Panel 2: Predicted Mean Surface
         ax2 = fig.add_subplot(2, 2, 2)
-        X1 = candidates[:, 0].reshape(res, res)
-        X2 = candidates[:, 1].reshape(res, res)
-        Z_mean = mean.reshape(res, res)
-        c2 = ax2.contourf(X1, X2, Z_mean, levels=30, cmap='viridis')
+        x_grid_lin = np.linspace(0, 1, res)
+        X1, X2 = np.meshgrid(x_grid_lin, x_grid_lin)
+        grid_eval = np.vstack([X1.ravel(), X2.ravel()]).T
+        m_grid, s_grid = gp_surrogate.predict(grid_eval, return_std=True)
+
+        c2 = ax2.contourf(X1, X2, m_grid.reshape(res, res), levels=30, cmap='viridis')
         fig.colorbar(c2, ax=ax2, label='Predicted Output (y)')
         ax2.scatter(X[:, 0], X[:, 1], color='red', marker='o', s=60, edgecolors='black', label=f'Explored Points (n={n_samples})')
         ax2.scatter(current_best_x[0], current_best_x[1], color='gold', marker='*', s=250, edgecolors='black', label=f'Current Max ({current_best_y:.3f})')
@@ -275,10 +349,10 @@ def process_function(func_id, week_num=8):
         ax2.set_title("2. GP Mean Landscape & Query Location")
         ax2.legend(loc='upper left', fontsize=8)
 
-        # Panel 3: Acquisition Function Contour (EI)
+        # Panel 3: EI Map
         ax3 = fig.add_subplot(2, 2, 3)
-        Z_ei = ei.reshape(res, res)
-        c3 = ax3.contourf(X1, X2, Z_ei, levels=30, cmap='magma')
+        _, _, ei_grid, _ = compute_acquisition(gp_surrogate, grid_eval, current_best_y, y_range)
+        c3 = ax3.contourf(X1, X2, ei_grid.reshape(res, res), levels=30, cmap='magma')
         fig.colorbar(c3, ax=ax3, label='EI Acquisition Value')
         ax3.scatter(next_query_x[0], next_query_x[1], color='magenta', marker='X', s=250, edgecolors='black', label=f'Next Query (W{week_num})')
         ax3.set_xlabel("Dimension 1")
@@ -286,10 +360,9 @@ def process_function(func_id, week_num=8):
         ax3.set_title("3. Expected Improvement (EI) Acquisition Map")
         ax3.legend(loc='upper left', fontsize=8)
 
-        # Panel 4: GP Model Uncertainty (Std Dev) Contour Map
+        # Panel 4: Epistemic Uncertainty Map
         ax4 = fig.add_subplot(2, 2, 4)
-        Z_std = std.reshape(res, res)
-        c4 = ax4.contourf(X1, X2, Z_std, levels=30, cmap='plasma')
+        c4 = ax4.contourf(X1, X2, s_grid.reshape(res, res), levels=30, cmap='plasma')
         fig.colorbar(c4, ax=ax4, label='Uncertainty (Std Dev)')
         ax4.scatter(X[:, 0], X[:, 1], color='red', marker='o', s=50, edgecolors='black')
         ax4.set_xlabel("Dimension 1")
@@ -305,7 +378,7 @@ def process_function(func_id, week_num=8):
         ax1.set_title("1. Model Cross-Validation Performance")
         ax1.invert_yaxis()
 
-        # Panel 2: 1D Profile Slices through Current Best Point
+        # Panel 2: 1D Profile Slices
         ax2 = fig.add_subplot(2, 2, 2)
         n_points_slice = 100
         t_vals = np.linspace(0, 1, n_points_slice)
@@ -314,7 +387,7 @@ def process_function(func_id, week_num=8):
         for d in range(dim):
             slice_coords = np.tile(current_best_x, (n_points_slice, 1))
             slice_coords[:, d] = t_vals
-            pred_m, pred_s = gp_primary.predict(slice_coords, return_std=True)
+            pred_m, _ = gp_surrogate.predict(slice_coords, return_std=True)
             ax2.plot(t_vals, pred_m, label=f"Dim {d+1}", color=colors[d], linewidth=1.8)
 
         ax2.axvline(current_best_x[0], color='gray', linestyle='--', alpha=0.5, label='Current Best Location')
@@ -323,15 +396,15 @@ def process_function(func_id, week_num=8):
         ax2.set_title(f"2. 1D Feature Sensitivity Slices ({dim}D)")
         ax2.legend(loc='upper right', fontsize=8, ncol=2)
 
-        # Panel 3: RF Feature Importances (Surrogate Structure Insight)
+        # Panel 3: RF Feature Importances
         ax3 = fig.add_subplot(2, 2, 3)
-        rf_imp = rf_primary.feature_importances_
+        rf_imp = rf_aux.feature_importances_
         dims_labels = [f"Dim {d+1}" for d in range(dim)]
         ax3.bar(dims_labels, rf_imp, color='darkorange', edgecolor='black')
         ax3.set_ylabel("Gini Feature Importance")
         ax3.set_title("3. Feature Importance Profile")
 
-        # Panel 4: Candidate Acquisition Distribution & Top Query Selection
+        # Panel 4: Acquisition Distribution
         ax4 = fig.add_subplot(2, 2, 4)
         ax4.hist(ei, bins=50, color='purple', alpha=0.7, edgecolor='black', log=True)
         ax4.axvline(np.max(ei), color='magenta', linestyle='--', linewidth=2, label=f'Selected Query (EI={np.max(ei):.4e})')
@@ -344,19 +417,20 @@ def process_function(func_id, week_num=8):
     vis_path = os.path.join(VIS_DIR, f"function_{func_id}_week{week_num}.png")
     plt.savefig(vis_path, dpi=200, bbox_inches='tight')
     plt.close()
-    print(f"Saved visualization to {vis_path}")
+    print(f"Saved visualization to {vis_path}", flush=True)
 
     return {
         'func_id': func_id,
         'dim': dim,
         'n_samples': n_samples,
-        'current_best_y': float(current_best_y),
+        'current_best_y': current_best_y,
         'current_best_x': current_best_x.tolist(),
         'best_model': cv_df.iloc[0]['Model'],
         'best_model_cv_mse': float(cv_df.iloc[0]['CV_MSE_Mean']),
+        'chosen_gp_surrogate': chosen_gp_name,
         'next_query_x': next_query_x.tolist(),
-        'predicted_y_mean': float(next_query_pred_mean),
-        'predicted_y_std': float(next_query_pred_std),
+        'predicted_y_mean': next_query_pred_mean,
+        'predicted_y_std': next_query_pred_std,
         'submission_string': query_str,
         'cv_results': cv_df.to_dict(orient='records')
     }
@@ -471,33 +545,38 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 
     plt.savefig(summary_fig_path, dpi=200, bbox_inches='tight')
     plt.close()
 
-    print(f"\nMaster summary dashboard visualization updated at: {summary_fig_path}")
+    print(f"\nMaster summary dashboard visualization updated at: {summary_fig_path}", flush=True)
 
 
 def main():
-    CURRENT_WEEK = 8
-    CURRENT_WEEK_LABEL = f"Week {CURRENT_WEEK} (Module 19)"
+    parser = argparse.ArgumentParser(description="Unified BBO Master Optimization Engine")
+    parser.add_argument("--week", type=int, default=8, help="Current optimization week round (default: 8)")
+    args = parser.parse_args()
+
+    current_week = args.week
+    current_week_label = f"Week {current_week} (Module 19)"
+
+    print(f"\nStarting BBO Master Engine execution for {current_week_label}...", flush=True)
     summary_results = []
     for func_id in range(1, 9):
-        res = process_function(func_id, week_num=CURRENT_WEEK)
+        res = process_function(func_id, week_num=current_week)
         summary_results.append(res)
 
-    json_path = f"week{CURRENT_WEEK}_summary.json"
+    json_path = f"week{current_week}_summary.json"
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(summary_results, f, indent=2)
 
-    # Generate master weekly summary dashboard figure
-    generate_weekly_summary_dashboard(summary_results, current_week_label=CURRENT_WEEK_LABEL)
+    generate_weekly_summary_dashboard(summary_results, current_week_label=current_week_label)
 
-    print("\n" + "=" * 80)
-    print(f"                      WEEK {CURRENT_WEEK} PORTAL SUBMISSION SUMMARY                       ")
-    print("=" * 80)
-    print(f"{'Func':<6} | {'Dim':<4} | {'Current Best y':<16} | {'Submission String (x1-x2-...-xn)'}")
-    print("-" * 80)
+    print("\n" + "=" * 80, flush=True)
+    print(f"                      WEEK {current_week} PORTAL SUBMISSION SUMMARY                       ", flush=True)
+    print("=" * 80, flush=True)
+    print(f"{'Func':<6} | {'Dim':<4} | {'Current Best y':<16} | {'Submission String (x1-x2-...-xn)'}", flush=True)
+    print("-" * 80, flush=True)
     for s in summary_results:
-        print(f"Func {s['func_id']:<2} | {s['dim']:<4}D | {s['current_best_y']:<16.6f} | {s['submission_string']}")
-    print("=" * 80)
-    print(f"\nSubmission strings saved to {json_path}. Visualisations generated in visualizations/")
+        print(f"Func {s['func_id']:<2} | {s['dim']:<4}D | {s['current_best_y']:<16.6f} | {s['submission_string']}", flush=True)
+    print("=" * 80, flush=True)
+    print(f"\nResults saved to {json_path}. Visualizations updated in visualizations/", flush=True)
 
 
 if __name__ == "__main__":

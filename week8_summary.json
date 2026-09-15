@@ -1,0 +1,598 @@
+[
+  {
+    "func_id": 1,
+    "dim": 2,
+    "n_samples": 17,
+    "current_best_y": 7.710875114502849e-16,
+    "current_best_x": [
+      0.7310236309563586,
+      0.7329998764152272
+    ],
+    "best_model": "Polynomial Ridge",
+    "best_model_cv_mse": 9.505262125923126e-07,
+    "chosen_gp_surrogate": "GP (Matern 1.5 ARD)",
+    "next_query_x": [
+      0.7135678391959799,
+      0.949748743718593
+    ],
+    "predicted_y_mean": 0.00010807079027638384,
+    "predicted_y_std": 0.0007553192971239573,
+    "submission_string": "0.713568-0.949749",
+    "cv_results": [
+      {
+        "Model": "Polynomial Ridge",
+        "CV_MSE_Mean": 9.505262125923126e-07,
+        "CV_MSE_Std": 1.6922658029075885e-06,
+        "CV_R2_Mean": -0.10000000000001537
+      },
+      {
+        "Model": "Random Forest",
+        "CV_MSE_Mean": 1.0131606617401914e-06,
+        "CV_MSE_Std": 1.6677875961165924e-06,
+        "CV_R2_Mean": -0.10000000000001008
+      },
+      {
+        "Model": "Extra Trees",
+        "CV_MSE_Mean": 1.0162711619214645e-06,
+        "CV_MSE_Std": 1.660979609797022e-06,
+        "CV_R2_Mean": -0.10000000000000915
+      },
+      {
+        "Model": "Gradient Boosting",
+        "CV_MSE_Mean": 1.0355629965829487e-06,
+        "CV_MSE_Std": 1.6815198192651011e-06,
+        "CV_R2_Mean": -0.10000000000000915
+      },
+      {
+        "Model": "GP (Matern 1.5 ARD)",
+        "CV_MSE_Mean": 1.6227899148362436e-06,
+        "CV_MSE_Std": 1.5763043679465097e-06,
+        "CV_R2_Mean": -0.10000000000000431
+      },
+      {
+        "Model": "GP (Matern 2.5 ARD)",
+        "CV_MSE_Mean": 1.6911708725520709e-06,
+        "CV_MSE_Std": 1.6008335211389119e-06,
+        "CV_R2_Mean": -0.10000000000000334
+      },
+      {
+        "Model": "GP (RBF ARD)",
+        "CV_MSE_Mean": 1.7569456647844289e-06,
+        "CV_MSE_Std": 1.6409018605347798e-06,
+        "CV_R2_Mean": -0.10000000000000146
+      },
+      {
+        "Model": "Neural Net (MLP)",
+        "CV_MSE_Mean": 0.006267967168222852,
+        "CV_MSE_Std": 0.006399208666755864,
+        "CV_R2_Mean": -85.59762987608511
+      }
+    ]
+  },
+  {
+    "func_id": 2,
+    "dim": 2,
+    "n_samples": 17,
+    "current_best_y": 0.6643418925557312,
+    "current_best_x": [
+      0.698492,
+      0.909548
+    ],
+    "best_model": "Gradient Boosting",
+    "best_model_cv_mse": 0.02382793913829974,
+    "chosen_gp_surrogate": "GP (RBF ARD)",
+    "next_query_x": [
+      0.6582914572864321,
+      0.05527638190954774
+    ],
+    "predicted_y_mean": 0.4553760409957252,
+    "predicted_y_std": 0.18126795100281412,
+    "submission_string": "0.658291-0.055276",
+    "cv_results": [
+      {
+        "Model": "Gradient Boosting",
+        "CV_MSE_Mean": 0.02382793913829974,
+        "CV_MSE_Std": 0.012531173626267995,
+        "CV_R2_Mean": -0.3855245795141872
+      },
+      {
+        "Model": "Random Forest",
+        "CV_MSE_Mean": 0.026086504704629587,
+        "CV_MSE_Std": 0.02281034033527647,
+        "CV_R2_Mean": -1.799653968080816
+      },
+      {
+        "Model": "Extra Trees",
+        "CV_MSE_Mean": 0.029493604750409158,
+        "CV_MSE_Std": 0.029488092613416478,
+        "CV_R2_Mean": -2.1736831559257204
+      },
+      {
+        "Model": "GP (RBF ARD)",
+        "CV_MSE_Mean": 0.03753149937752966,
+        "CV_MSE_Std": 0.02825864791202718,
+        "CV_R2_Mean": -2.3196078215768887
+      },
+      {
+        "Model": "GP (Matern 2.5 ARD)",
+        "CV_MSE_Mean": 0.04090959413629289,
+        "CV_MSE_Std": 0.03326293129352789,
+        "CV_R2_Mean": -2.895193261093982
+      },
+      {
+        "Model": "GP (Matern 1.5 ARD)",
+        "CV_MSE_Mean": 0.04330911104258852,
+        "CV_MSE_Std": 0.0372456238027459,
+        "CV_R2_Mean": -3.3075535848236006
+      },
+      {
+        "Model": "Polynomial Ridge",
+        "CV_MSE_Mean": 0.04982144892370731,
+        "CV_MSE_Std": 0.024939787833361544,
+        "CV_R2_Mean": -2.720919433909291
+      },
+      {
+        "Model": "Neural Net (MLP)",
+        "CV_MSE_Mean": 0.05105743420112757,
+        "CV_MSE_Std": 0.026443220815649454,
+        "CV_R2_Mean": -2.8751999260581753
+      }
+    ]
+  },
+  {
+    "func_id": 3,
+    "dim": 3,
+    "n_samples": 22,
+    "current_best_y": -0.0048070652277623915,
+    "current_best_x": [
+      0.455167,
+      0.521242,
+      0.486792
+    ],
+    "best_model": "Extra Trees",
+    "best_model_cv_mse": 0.005094564706880531,
+    "chosen_gp_surrogate": "GP (Matern 1.5 ARD)",
+    "next_query_x": [
+      0.9701927681337583,
+      0.984522188629646,
+      0.46076081340760566
+    ],
+    "predicted_y_mean": 0.029300309898658963,
+    "predicted_y_std": 0.036284160711296115,
+    "submission_string": "0.970193-0.984522-0.460761",
+    "cv_results": [
+      {
+        "Model": "Extra Trees",
+        "CV_MSE_Mean": 0.005094564706880531,
+        "CV_MSE_Std": 0.00818208351039225,
+        "CV_R2_Mean": -1.4466804738187296
+      },
+      {
+        "Model": "Gradient Boosting",
+        "CV_MSE_Mean": 0.005474208362346725,
+        "CV_MSE_Std": 0.009176347831309427,
+        "CV_R2_Mean": -0.9804616839528215
+      },
+      {
+        "Model": "Random Forest",
+        "CV_MSE_Mean": 0.005840859873188442,
+        "CV_MSE_Std": 0.009877629607907633,
+        "CV_R2_Mean": -3.113854778792124
+      },
+      {
+        "Model": "Polynomial Ridge",
+        "CV_MSE_Mean": 0.006308882974655562,
+        "CV_MSE_Std": 0.008033924652477015,
+        "CV_R2_Mean": -5.921882694831671
+      },
+      {
+        "Model": "GP (Matern 1.5 ARD)",
+        "CV_MSE_Mean": 0.006326277648378247,
+        "CV_MSE_Std": 0.008623526634697386,
+        "CV_R2_Mean": -4.160403727963841
+      },
+      {
+        "Model": "GP (RBF ARD)",
+        "CV_MSE_Mean": 0.007152782440190462,
+        "CV_MSE_Std": 0.007863862649642834,
+        "CV_R2_Mean": -22.481256157738926
+      },
+      {
+        "Model": "GP (Matern 2.5 ARD)",
+        "CV_MSE_Mean": 0.007416929795136079,
+        "CV_MSE_Std": 0.00829583685997621,
+        "CV_R2_Mean": -17.184255149949358
+      },
+      {
+        "Model": "Neural Net (MLP)",
+        "CV_MSE_Mean": 0.007421908182258038,
+        "CV_MSE_Std": 0.007151640845052456,
+        "CV_R2_Mean": -18.132616445425576
+      }
+    ]
+  },
+  {
+    "func_id": 4,
+    "dim": 4,
+    "n_samples": 37,
+    "current_best_y": 0.36752865304022864,
+    "current_best_x": [
+      0.384555,
+      0.428957,
+      0.409752,
+      0.392875
+    ],
+    "best_model": "GP (Matern 1.5 ARD)",
+    "best_model_cv_mse": 5.16860879616493,
+    "chosen_gp_surrogate": "GP (Matern 1.5 ARD)",
+    "next_query_x": [
+      0.4084124918832005,
+      0.3775071727903584,
+      0.40947385220626326,
+      0.40154906081345826
+    ],
+    "predicted_y_mean": 0.3492529353640297,
+    "predicted_y_std": 0.2570485329359819,
+    "submission_string": "0.408412-0.377507-0.409474-0.401549",
+    "cv_results": [
+      {
+        "Model": "GP (Matern 1.5 ARD)",
+        "CV_MSE_Mean": 5.16860879616493,
+        "CV_MSE_Std": 4.593449799397085,
+        "CV_R2_Mean": 0.9344476609573444
+      },
+      {
+        "Model": "GP (Matern 2.5 ARD)",
+        "CV_MSE_Mean": 8.624484648985197,
+        "CV_MSE_Std": 3.7316513480489255,
+        "CV_R2_Mean": 0.8673392976405138
+      },
+      {
+        "Model": "Neural Net (MLP)",
+        "CV_MSE_Mean": 11.957381723677162,
+        "CV_MSE_Std": 6.345794033461684,
+        "CV_R2_Mean": 0.8016921891423013
+      },
+      {
+        "Model": "Polynomial Ridge",
+        "CV_MSE_Mean": 15.992627547729024,
+        "CV_MSE_Std": 6.171464785736374,
+        "CV_R2_Mean": 0.7491871992725376
+      },
+      {
+        "Model": "Extra Trees",
+        "CV_MSE_Mean": 18.269450787485887,
+        "CV_MSE_Std": 12.196820071458772,
+        "CV_R2_Mean": 0.7279590131583222
+      },
+      {
+        "Model": "Random Forest",
+        "CV_MSE_Mean": 26.326165145279095,
+        "CV_MSE_Std": 14.718879869176018,
+        "CV_R2_Mean": 0.610107132962226
+      },
+      {
+        "Model": "Gradient Boosting",
+        "CV_MSE_Mean": 27.291889495188855,
+        "CV_MSE_Std": 12.036579973576579,
+        "CV_R2_Mean": 0.5990960171720874
+      },
+      {
+        "Model": "GP (RBF ARD)",
+        "CV_MSE_Mean": 28.66495060836265,
+        "CV_MSE_Std": 8.502226185248166,
+        "CV_R2_Mean": 0.53363933771963
+      }
+    ]
+  },
+  {
+    "func_id": 5,
+    "dim": 4,
+    "n_samples": 27,
+    "current_best_y": 5893.206247325308,
+    "current_best_x": [
+      0.969673,
+      0.950156,
+      0.973099,
+      0.9392
+    ],
+    "best_model": "Extra Trees",
+    "best_model_cv_mse": 560392.8582311679,
+    "chosen_gp_surrogate": "GP (Matern 2.5 ARD)",
+    "next_query_x": [
+      0.9715505457834093,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "predicted_y_mean": 6453.213673841672,
+    "predicted_y_std": 157.85655197620136,
+    "submission_string": "0.971551-1.000000-1.000000-1.000000",
+    "cv_results": [
+      {
+        "Model": "Extra Trees",
+        "CV_MSE_Mean": 560392.8582311679,
+        "CV_MSE_Std": 712535.9196021871,
+        "CV_R2_Mean": 0.4352868972693583
+      },
+      {
+        "Model": "Polynomial Ridge",
+        "CV_MSE_Mean": 580960.2429248483,
+        "CV_MSE_Std": 428869.2418909279,
+        "CV_R2_Mean": -4.106902047877407
+      },
+      {
+        "Model": "GP (Matern 2.5 ARD)",
+        "CV_MSE_Mean": 594409.7774967747,
+        "CV_MSE_Std": 891885.8612900327,
+        "CV_R2_Mean": 0.2969587144706748
+      },
+      {
+        "Model": "GP (Matern 1.5 ARD)",
+        "CV_MSE_Mean": 596920.0436133128,
+        "CV_MSE_Std": 889790.2672593558,
+        "CV_R2_Mean": 0.3552567041917007
+      },
+      {
+        "Model": "GP (RBF ARD)",
+        "CV_MSE_Mean": 713485.7697210595,
+        "CV_MSE_Std": 1002012.8287357754,
+        "CV_R2_Mean": -1.4256194404767368
+      },
+      {
+        "Model": "Gradient Boosting",
+        "CV_MSE_Mean": 827683.6892815146,
+        "CV_MSE_Std": 1285444.3497447083,
+        "CV_R2_Mean": 0.42999636817508124
+      },
+      {
+        "Model": "Neural Net (MLP)",
+        "CV_MSE_Mean": 966499.5285628304,
+        "CV_MSE_Std": 1550273.9012066217,
+        "CV_R2_Mean": -0.19289690424798572
+      },
+      {
+        "Model": "Random Forest",
+        "CV_MSE_Mean": 968808.9883864841,
+        "CV_MSE_Std": 1674620.5382427522,
+        "CV_R2_Mean": 0.24087223639503358
+      }
+    ]
+  },
+  {
+    "func_id": 6,
+    "dim": 5,
+    "n_samples": 27,
+    "current_best_y": -0.21664495397110217,
+    "current_best_x": [
+      0.437161,
+      0.320742,
+      0.578847,
+      0.762968,
+      0.194246
+    ],
+    "best_model": "Neural Net (MLP)",
+    "best_model_cv_mse": 0.040663723507802764,
+    "chosen_gp_surrogate": "GP (Matern 1.5 ARD)",
+    "next_query_x": [
+      0.47082213368159037,
+      0.29603653562423016,
+      0.6663529949820007,
+      0.6871890772465215,
+      0.17169799299768396
+    ],
+    "predicted_y_mean": -0.2115033152899235,
+    "predicted_y_std": 0.05542756143691661,
+    "submission_string": "0.470822-0.296037-0.666353-0.687189-0.171698",
+    "cv_results": [
+      {
+        "Model": "Neural Net (MLP)",
+        "CV_MSE_Mean": 0.040663723507802764,
+        "CV_MSE_Std": 0.03428785412633915,
+        "CV_R2_Mean": 0.7522857664939318
+      },
+      {
+        "Model": "GP (Matern 1.5 ARD)",
+        "CV_MSE_Mean": 0.04920319753364383,
+        "CV_MSE_Std": 0.021029397677239027,
+        "CV_R2_Mean": 0.81425836647831
+      },
+      {
+        "Model": "GP (Matern 2.5 ARD)",
+        "CV_MSE_Mean": 0.06888334768883296,
+        "CV_MSE_Std": 0.04386382146127761,
+        "CV_R2_Mean": 0.7592282748597576
+      },
+      {
+        "Model": "Extra Trees",
+        "CV_MSE_Mean": 0.07877188948005265,
+        "CV_MSE_Std": 0.035486224213165225,
+        "CV_R2_Mean": 0.6433598607905867
+      },
+      {
+        "Model": "GP (RBF ARD)",
+        "CV_MSE_Mean": 0.08847900587568407,
+        "CV_MSE_Std": 0.04116408205447581,
+        "CV_R2_Mean": 0.6488152496521614
+      },
+      {
+        "Model": "Polynomial Ridge",
+        "CV_MSE_Mean": 0.11687823535349114,
+        "CV_MSE_Std": 0.07239345831443934,
+        "CV_R2_Mean": 0.3557080502040963
+      },
+      {
+        "Model": "Random Forest",
+        "CV_MSE_Mean": 0.15138743115114767,
+        "CV_MSE_Std": 0.09878850317696443,
+        "CV_R2_Mean": 0.15009568563075337
+      },
+      {
+        "Model": "Gradient Boosting",
+        "CV_MSE_Mean": 0.19759477858136137,
+        "CV_MSE_Std": 0.1881782962892404,
+        "CV_R2_Mean": -0.325831384711719
+      }
+    ]
+  },
+  {
+    "func_id": 7,
+    "dim": 6,
+    "n_samples": 37,
+    "current_best_y": 2.233317600255839,
+    "current_best_x": [
+      0.10564,
+      0.34769,
+      0.307992,
+      0.359223,
+      0.329529,
+      0.76918
+    ],
+    "best_model": "Extra Trees",
+    "best_model_cv_mse": 0.17343679776499582,
+    "chosen_gp_surrogate": "GP (RBF ARD)",
+    "next_query_x": [
+      0.18439600959714803,
+      0.33930955021937326,
+      0.41688159179235973,
+      0.3471321056552809,
+      0.3203561398260814,
+      0.7839892340745207
+    ],
+    "predicted_y_mean": 2.2350380378651153,
+    "predicted_y_std": 0.08644712955020921,
+    "submission_string": "0.184396-0.339310-0.416882-0.347132-0.320356-0.783989",
+    "cv_results": [
+      {
+        "Model": "Extra Trees",
+        "CV_MSE_Mean": 0.17343679776499582,
+        "CV_MSE_Std": 0.10392164503322293,
+        "CV_R2_Mean": -0.5097825268008497
+      },
+      {
+        "Model": "Neural Net (MLP)",
+        "CV_MSE_Mean": 0.18502730591603123,
+        "CV_MSE_Std": 0.14220922488625554,
+        "CV_R2_Mean": -1.4476577903016246
+      },
+      {
+        "Model": "GP (RBF ARD)",
+        "CV_MSE_Mean": 0.19018692978364274,
+        "CV_MSE_Std": 0.20131590236095517,
+        "CV_R2_Mean": -0.022838482922242064
+      },
+      {
+        "Model": "GP (Matern 1.5 ARD)",
+        "CV_MSE_Mean": 0.1931216337528167,
+        "CV_MSE_Std": 0.22609839250376476,
+        "CV_R2_Mean": -0.010115224637864429
+      },
+      {
+        "Model": "GP (Matern 2.5 ARD)",
+        "CV_MSE_Mean": 0.1998474518335009,
+        "CV_MSE_Std": 0.2168658779141554,
+        "CV_R2_Mean": -0.17500069908637444
+      },
+      {
+        "Model": "Polynomial Ridge",
+        "CV_MSE_Mean": 0.2271967807993734,
+        "CV_MSE_Std": 0.11451634234970787,
+        "CV_R2_Mean": -0.8013796377753909
+      },
+      {
+        "Model": "Random Forest",
+        "CV_MSE_Mean": 0.3067000150947479,
+        "CV_MSE_Std": 0.20116425386860287,
+        "CV_R2_Mean": -0.4739020461568103
+      },
+      {
+        "Model": "Gradient Boosting",
+        "CV_MSE_Mean": 0.41521553097762365,
+        "CV_MSE_Std": 0.25424703249933206,
+        "CV_R2_Mean": -1.0329986523341472
+      }
+    ]
+  },
+  {
+    "func_id": 8,
+    "dim": 8,
+    "n_samples": 47,
+    "current_best_y": 9.9513094736056,
+    "current_best_x": [
+      0.143181,
+      0.053741,
+      0.077646,
+      0.278296,
+      0.878902,
+      0.438223,
+      0.234852,
+      0.471378
+    ],
+    "best_model": "GP (Matern 2.5 ARD)",
+    "best_model_cv_mse": 0.02169644246534061,
+    "chosen_gp_surrogate": "GP (Matern 2.5 ARD)",
+    "next_query_x": [
+      0.15470193653355413,
+      0.08847236192074541,
+      0.09771971982164784,
+      0.13664350626690466,
+      0.9956082037342799,
+      0.5444517942006573,
+      0.13636455525873842,
+      0.4974326475070181
+    ],
+    "predicted_y_mean": 10.016831162284863,
+    "predicted_y_std": 0.024891791012140778,
+    "submission_string": "0.154702-0.088472-0.097720-0.136644-0.995608-0.544452-0.136365-0.497433",
+    "cv_results": [
+      {
+        "Model": "GP (Matern 2.5 ARD)",
+        "CV_MSE_Mean": 0.02169644246534061,
+        "CV_MSE_Std": 0.018961989117579906,
+        "CV_R2_Mean": 0.9827397854815884
+      },
+      {
+        "Model": "GP (Matern 1.5 ARD)",
+        "CV_MSE_Mean": 0.022413410603288268,
+        "CV_MSE_Std": 0.008857549143367479,
+        "CV_R2_Mean": 0.9808943174977383
+      },
+      {
+        "Model": "GP (RBF ARD)",
+        "CV_MSE_Mean": 0.02785275320548709,
+        "CV_MSE_Std": 0.014765926509915579,
+        "CV_R2_Mean": 0.9761854066828126
+      },
+      {
+        "Model": "Polynomial Ridge",
+        "CV_MSE_Mean": 0.06898823077972346,
+        "CV_MSE_Std": 0.03790694779668006,
+        "CV_R2_Mean": 0.9422470428859737
+      },
+      {
+        "Model": "Extra Trees",
+        "CV_MSE_Mean": 0.17599934314428597,
+        "CV_MSE_Std": 0.04016450507112487,
+        "CV_R2_Mean": 0.8452046177269368
+      },
+      {
+        "Model": "Gradient Boosting",
+        "CV_MSE_Mean": 0.2538218091197532,
+        "CV_MSE_Std": 0.0781954673821139,
+        "CV_R2_Mean": 0.7498261423537989
+      },
+      {
+        "Model": "Random Forest",
+        "CV_MSE_Mean": 0.2766469689531549,
+        "CV_MSE_Std": 0.12536784955935332,
+        "CV_R2_Mean": 0.7590324345820328
+      },
+      {
+        "Model": "Neural Net (MLP)",
+        "CV_MSE_Mean": 1.5420139816205096,
+        "CV_MSE_Std": 0.6303227802485375,
+        "CV_R2_Mean": -0.31195593740293864
+      }
+    ]
+  }
+]
