@@ -261,7 +261,7 @@ def select_best_gp_surrogate(cv_df, dim):
     return 'GP (Matern 2.5 ARD)', gp_map['GP (Matern 2.5 ARD)']
 
 
-def process_function(func_id, week_num=8):
+def process_function(func_id, week_num=10):
     """
     Executes enhanced modeling, candidate filtering, acquisition, and visual export for a function.
     """
@@ -436,7 +436,7 @@ def process_function(func_id, week_num=8):
     }
 
 
-def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 8 (Module 19)"):
+def generate_weekly_summary_dashboard(summary_results, current_week_label=None):
     """
     Generates and updates a master 2x2 dashboard figure tracking multi-week optimization progress.
     """
@@ -446,6 +446,9 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 
             history = json.load(f)
     else:
         history = {}
+
+    if current_week_label is None:
+        current_week_label = "Latest"
 
     history[current_week_label] = {}
     for entry in summary_results:
@@ -550,11 +553,12 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 
 
 def main():
     parser = argparse.ArgumentParser(description="Unified BBO Master Optimization Engine")
-    parser.add_argument("--week", type=int, default=8, help="Current optimization week round (default: 8)")
+    parser.add_argument("--week", type=int, default=10, help="Current optimization week round (default: 10)")
     args = parser.parse_args()
 
     current_week = args.week
-    current_week_label = f"Week {current_week} (Module 19)"
+    module_num = current_week + 11
+    current_week_label = f"Week {current_week} (Module {module_num})"
 
     print(f"\nStarting BBO Master Engine execution for {current_week_label}...", flush=True)
     summary_results = []

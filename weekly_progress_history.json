@@ -408,59 +408,175 @@
   "Week 8 (Module 19)": {
     "Func 1": {
       "best_y": 7.710875114502849e-16,
-      "pred_mean": 0.00010807079027638384,
-      "pred_std": 0.0007553192971239573,
-      "best_model": "Polynomial Ridge",
-      "cv_mse": 9.505262125923126e-07
+      "pred_mean": -0.00012459615179641163,
+      "pred_std": 0.000821207403035482,
+      "best_model": "Gradient Boosting",
+      "cv_mse": 8.66913884025513e-07
     },
     "Func 2": {
       "best_y": 0.6643418925557312,
-      "pred_mean": 0.4553760409957252,
-      "pred_std": 0.18126795100281412,
+      "pred_mean": 0.6069352611299129,
+      "pred_std": 0.1347105489015966,
       "best_model": "Gradient Boosting",
-      "cv_mse": 0.02382793913829974
+      "cv_mse": 0.0228997580444534
     },
     "Func 3": {
       "best_y": -0.0048070652277623915,
-      "pred_mean": 0.029300309898658963,
-      "pred_std": 0.036284160711296115,
-      "best_model": "Extra Trees",
-      "cv_mse": 0.005094564706880531
+      "pred_mean": -0.045145157982752836,
+      "pred_std": 0.05527575121952618,
+      "best_model": "Gradient Boosting",
+      "cv_mse": 0.005244566838698643
     },
     "Func 4": {
       "best_y": 0.36752865304022864,
-      "pred_mean": 0.3492529353640297,
-      "pred_std": 0.2570485329359819,
-      "best_model": "GP (Matern 1.5 ARD)",
-      "cv_mse": 5.16860879616493
+      "pred_mean": -20.96994815999938,
+      "pred_std": 7.23206279928667,
+      "best_model": "GP (Matern 1.5)",
+      "cv_mse": 4.472688004821041
     },
     "Func 5": {
       "best_y": 5893.206247325308,
-      "pred_mean": 6453.213673841672,
-      "pred_std": 157.85655197620136,
-      "best_model": "Extra Trees",
-      "cv_mse": 560392.8582311679
+      "pred_mean": 5492.270077322024,
+      "pred_std": 238.6171054321355,
+      "best_model": "GP (Matern 1.5)",
+      "cv_mse": 65873.62538751643
     },
     "Func 6": {
       "best_y": -0.21664495397110217,
-      "pred_mean": -0.2115033152899235,
-      "pred_std": 0.05542756143691661,
+      "pred_mean": -0.38802611201231163,
+      "pred_std": 0.1117388278449344,
       "best_model": "Neural Net (MLP)",
-      "cv_mse": 0.040663723507802764
+      "cv_mse": 0.037289725801367246
     },
     "Func 7": {
       "best_y": 2.233317600255839,
-      "pred_mean": 2.2350380378651153,
-      "pred_std": 0.08644712955020921,
-      "best_model": "Extra Trees",
-      "cv_mse": 0.17343679776499582
+      "pred_mean": 1.7567497090001596,
+      "pred_std": 0.3376515867156322,
+      "best_model": "GP (Matern 1.5)",
+      "cv_mse": 0.08027210930723215
     },
     "Func 8": {
       "best_y": 9.9513094736056,
-      "pred_mean": 10.016831162284863,
-      "pred_std": 0.024891791012140778,
+      "pred_mean": 9.903069966754005,
+      "pred_std": 0.08794135295620217,
+      "best_model": "GP (Matern 2.5)",
+      "cv_mse": 0.04852524940143703
+    }
+  },
+  "Week 9 (Module 20)": {
+    "Func 1": {
+      "best_y": 7.710875114502849e-16,
+      "pred_mean": 9.810841325644758e-05,
+      "pred_std": 0.0007380821327749905,
+      "best_model": "Gradient Boosting",
+      "cv_mse": 8.66913884025513e-07
+    },
+    "Func 2": {
+      "best_y": 0.6643418925557312,
+      "pred_mean": 0.7542125975214031,
+      "pred_std": 0.091389999890755,
+      "best_model": "Gradient Boosting",
+      "cv_mse": 0.0228997580444534
+    },
+    "Func 3": {
+      "best_y": -0.0048070652277623915,
+      "pred_mean": 0.029665872107594332,
+      "pred_std": 0.03581002738922421,
+      "best_model": "Gradient Boosting",
+      "cv_mse": 0.005244566838698643
+    },
+    "Func 4": {
+      "best_y": 0.36752865304022864,
+      "pred_mean": 0.3472816039688915,
+      "pred_std": 0.21621184401054536,
+      "best_model": "GP (Matern 1.5 ARD)",
+      "cv_mse": 4.478191835877469
+    },
+    "Func 5": {
+      "best_y": 5893.206247325308,
+      "pred_mean": 6935.724176480424,
+      "pred_std": 200.7879434329183,
+      "best_model": "Extra Trees",
+      "cv_mse": 218563.98982590297
+    },
+    "Func 6": {
+      "best_y": -0.21664495397110217,
+      "pred_mean": -0.21649840979181223,
+      "pred_std": 0.05189972119971569,
+      "best_model": "Neural Net (MLP)",
+      "cv_mse": 0.037289725801367246
+    },
+    "Func 7": {
+      "best_y": 2.233317600255839,
+      "pred_mean": 2.280240742933014,
+      "pred_std": 0.07528942967674562,
       "best_model": "GP (Matern 2.5 ARD)",
-      "cv_mse": 0.02169644246534061
+      "cv_mse": 0.0722332547387852
+    },
+    "Func 8": {
+      "best_y": 9.9513094736056,
+      "pred_mean": 10.0041001853284,
+      "pred_std": 0.024840626965207457,
+      "best_model": "GP (Matern 2.5 ARD)",
+      "cv_mse": 0.011583378923136864
+    }
+  },
+  "Week 10 (Module 21)": {
+    "Func 1": {
+      "best_y": 7.710875114502849e-16,
+      "pred_mean": -0.0001152906791658935,
+      "pred_std": 0.0008255444242838421,
+      "best_model": "Polynomial Ridge",
+      "cv_mse": 6.98824234287175e-07
+    },
+    "Func 2": {
+      "best_y": 0.6767899452177749,
+      "pred_mean": 0.7130236628588449,
+      "pred_std": 0.032038718216216844,
+      "best_model": "Gradient Boosting",
+      "cv_mse": 0.021026060699641247
+    },
+    "Func 3": {
+      "best_y": -0.0048070652277623915,
+      "pred_mean": -0.02335908858981707,
+      "pred_std": 0.04771508272530681,
+      "best_model": "Gradient Boosting",
+      "cv_mse": 0.0051019725006452455
+    },
+    "Func 4": {
+      "best_y": 0.36752865304022864,
+      "pred_mean": -0.3287871744383448,
+      "pred_std": 0.3416507320559297,
+      "best_model": "GP (Matern 1.5 ARD)",
+      "cv_mse": 4.37526765476103
+    },
+    "Func 5": {
+      "best_y": 8662.4825,
+      "pred_mean": 144.0866590938183,
+      "pred_std": 2439.7413514052146,
+      "best_model": "GP (Matern 1.5 ARD)",
+      "cv_mse": 586300.5351191225
+    },
+    "Func 6": {
+      "best_y": -0.2084320044298043,
+      "pred_mean": -0.29651657693532274,
+      "pred_std": 0.0875088324912636,
+      "best_model": "GP (Matern 1.5 ARD)",
+      "cv_mse": 0.03649179763149894
+    },
+    "Func 7": {
+      "best_y": 2.233317600255839,
+      "pred_mean": 2.2471869910981113,
+      "pred_std": 0.028582395632645512,
+      "best_model": "GP (Matern 1.5 ARD)",
+      "cv_mse": 0.0792341096807481
+    },
+    "Func 8": {
+      "best_y": 9.9566672591371,
+      "pred_mean": 9.95903649216036,
+      "pred_std": 0.03865123553886235,
+      "best_model": "GP (Matern 2.5 ARD)",
+      "cv_mse": 0.015388036379346812
     }
   }
 }

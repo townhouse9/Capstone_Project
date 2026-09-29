@@ -78,3 +78,53 @@ Professional AI practitioners recognize that LLMs are non-deterministic reasonin
 Structured prompts paired with Gaussian Process cross-validation significantly reduce epistemic uncertainty near confirmed peaks, fully justifying deep exploitation along high-yield ridges—as demonstrated by Function 5 reaching 5893.21 and Function 8 achieving its new record of 9.951309.
 
 However, because finite attention windows can suffer from context fragmentation and sub-word tokenization can distort floating-point precision, pure exploitation is risky. We maintain active exploration on uncertain functions (Functions 1 and 4) using range-scaled acquisition jitter. At 17+ data points, raw context logs show clear diminishing returns; replacing raw logs with pre-computed surrogate telemetry completely resolves prompt overfitting and attention degradation.
+
+---
+
+## Week 9 (Module 20) Progress & Reflection: Scaling, Emergence, and Robust Optimisation
+
+### 1. Evaluated Inputs & Outputs
+- **Function 1 (2D, N=18)**: x = (0.467337, 0.899497), y = -2.611701e-70. Current Best y = 0.000000.
+- **Function 2 (2D, N=18)**: x = (0.708543, 0.899497), y = 0.589971. Current Best y = 0.664342.
+- **Function 3 (3D, N=23)**: x = (0.001199, 0.001794, 0.625666), y = -0.151348. Current Best y = -0.004807.
+- **Function 4 (4D, N=38)**: x = (0.382449, 0.359348, 0.511752, 0.380244), y = -1.479264. Current Best y = 0.367529.
+- **Function 5 (4D, N=28)**: x = (0.922756, 0.986637, 0.984891, 0.895457), y = 5430.877336. Current Best y = 5893.206247.
+- **Function 6 (5D, N=28)**: x = (0.455167, 0.358085, 0.501329, 0.612289, 0.118077), y = -0.371046. Current Best y = -0.216645.
+- **Function 7 (6D, N=38)**: x = (0.004479, 0.306936, 0.503959, 0.377022, 0.307476, 0.830835), y = 1.938013. Current Best y = 2.233318.
+- **Function 8 (8D, N=48)**: x = (0.064744, 0.079547, 0.264656, 0.342390, 0.954529, 0.992384, 0.077378, 0.241817), y = 9.603856. Current Best y = 9.951309.
+
+### 2. Week 9 Proposed Query Submissions
+- **Function 1**: `0.713568-0.949749` (GP Matern 1.5 ARD, predicted mean = 0.000098)
+- **Function 2**: `0.698492-0.834171` (GP Matern 1.5 ARD, predicted mean = 0.754213 +/- 0.091390)
+- **Function 3**: `0.970193-0.984522-0.460761` (GP Matern 1.5 ARD, predicted mean = 0.029666 +/- 0.035810)
+- **Function 4**: `0.402638-0.380588-0.389763-0.388768` (GP Matern 1.5 ARD, predicted mean = 0.347282 +/- 0.216212)
+- **Function 5**: `1.000000-1.000000-1.000000-1.000000` (GP Matern 1.5 ARD, predicted mean = 6935.724177 +/- 200.787944)
+- **Function 6**: `0.484955-0.317743-0.692710-0.736549-0.192644` (GP Matern 1.5 ARD, predicted mean = -0.216498 +/- 0.051900)
+- **Function 7**: `0.168778-0.465059-0.545326-0.341402-0.315811-0.749041` (GP Matern 2.5 ARD, predicted mean = 2.280241 +/- 0.075289)
+- **Function 8**: `0.154702-0.088472-0.097720-0.136644-0.995608-0.544452-0.136365-0.497433` (GP Matern 2.5 ARD, predicted mean = 10.004100 +/- 0.024841)
+
+---
+
+## Week 10 (Module 21) Progress & Reflection: Multi-Peak Breakthroughs & Limitations
+
+### 1. Evaluated Inputs & Outputs
+- **Function 1 (2D, N=19)**: x = (0.713568, 0.949749), y = -3.559517e-77. Current Best y = 0.000000.
+- **Function 2 (2D, N=19)**: x = (0.698492, 0.834171), y = 0.676790. **New Global Best y = 0.676790** (previous 0.664342).
+- **Function 3 (3D, N=24)**: x = (0.970193, 0.984522, 0.460761), y = -0.045959. Current Best y = -0.004807.
+- **Function 4 (4D, N=39)**: x = (0.402638, 0.380588, 0.389763, 0.388768), y = 0.013954. Current Best y = 0.367529 (Positive island confirmed).
+- **Function 5 (4D, N=29)**: x = (1.000000, 1.000000, 1.000000, 1.000000), y = 8662.482500. **New Astronomical Record y = 8662.482500** (previous 5893.206247).
+- **Function 6 (5D, N=29)**: x = (0.484955, 0.317743, 0.692710, 0.736549, 0.192644), y = -0.208432. **New Global Best y = -0.208432** (previous -0.216645).
+- **Function 7 (6D, N=39)**: x = (0.168778, 0.465059, 0.545326, 0.341402, 0.315811, 0.749041), y = 2.134923. Current Best y = 2.233318.
+- **Function 8 (8D, N=49)**: x = (0.154702, 0.088472, 0.097720, 0.136644, 0.995608, 0.544452, 0.136365, 0.497433), y = 9.956667. **New All-Time Record y = 9.956667** (previous 9.951309).
+
+### 2. Week 10 Proposed Query Submissions
+- **Function 1**: `0.371859-0.929648` (GP Matern 1.5 ARD, predicted mean = -0.000115 +/- 0.000826)
+- **Function 2**: `0.703518-0.859296` (GP Matern 1.5 ARD, predicted mean = 0.713024 +/- 0.032039)
+- **Function 3**: `0.949325-0.001078-0.518089` (GP Matern 1.5 ARD, predicted mean = -0.023359 +/- 0.047715)
+- **Function 4**: `0.403453-0.413199-0.351989-0.334569` (GP Matern 1.5 ARD, predicted mean = -0.328787 +/- 0.341651)
+- **Function 5**: `0.116862-0.002715-0.002588-0.993106` (GP Matern 1.5 ARD, predicted mean = 144.086659 +/- 2439.741351)
+- **Function 6**: `0.430195-0.229586-0.859094-0.680052-0.255631` (GP Matern 1.5 ARD, predicted mean = -0.296517 +/- 0.087509)
+- **Function 7**: `0.116884-0.345081-0.297592-0.363038-0.314334-0.743872` (GP Matern 1.5 ARD, predicted mean = 2.247187 +/- 0.028582)
+- **Function 8**: `0.000000-0.000000-0.137649-0.190520-1.000000-0.512091-0.153056-0.441351` (GP Matern 2.5 ARD, predicted mean = 9.959036 +/- 0.038651)
+
+

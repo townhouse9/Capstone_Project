@@ -475,8 +475,8 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label="Week 
 
 
 def main():
-    CURRENT_WEEK = 8
-    CURRENT_WEEK_LABEL = f"Week {CURRENT_WEEK} (Module 19)"
+    CURRENT_WEEK = 10
+    CURRENT_WEEK_LABEL = f"Week {CURRENT_WEEK} (Module 21)"
     summary_results = []
     for func_id in range(1, 9):
         res = process_function(func_id, week_num=CURRENT_WEEK)
