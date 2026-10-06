@@ -127,4 +127,29 @@ However, because finite attention windows can suffer from context fragmentation 
 - **Function 7**: `0.116884-0.345081-0.297592-0.363038-0.314334-0.743872` (GP Matern 1.5 ARD, predicted mean = 2.247187 +/- 0.028582)
 - **Function 8**: `0.000000-0.000000-0.137649-0.190520-1.000000-0.512091-0.153056-0.441351` (GP Matern 2.5 ARD, predicted mean = 9.959036 +/- 0.038651)
 
+---
+
+## Week 11 (Module 22) Progress & Reflection: Search Space Topography & Clustering Lens
+
+### 1. Evaluated Inputs & Outputs
+- **Function 1 (2D, N=20)**: x = (0.371859, 0.929648), y = -1.902318e-109. Current Best y = 0.000000.
+- **Function 2 (2D, N=20)**: x = (0.703518, 0.859296), y = 0.545453. Current Best y = 0.676790.
+- **Function 3 (3D, N=25)**: x = (0.949325, 0.001078, 0.518089), y = -0.084511. Current Best y = -0.004807.
+- **Function 4 (4D, N=40)**: x = (0.403453, 0.413199, 0.351989, 0.334569), y = 0.351763. Current Best y = 0.367529 (Positive centroid island confirmed stable).
+- **Function 5 (4D, N=30)**: x = (0.116862, 0.002715, 0.002588, 0.993106), y = 171.852402. Current Best y = 8662.482500 (Confirms vertex localization).
+- **Function 6 (5D, N=30)**: x = (0.430195, 0.229586, 0.859094, 0.680052, 0.255631), y = -0.680176. Current Best y = -0.208432.
+- **Function 7 (6D, N=40)**: x = (0.116884, 0.345081, 0.297592, 0.363038, 0.314334, 0.743872), y = 2.337795. **New All-Time Record Global High y = 2.337795** (previous 2.233318).
+- **Function 8 (8D, N=50)**: x = (0.000000, 0.000000, 0.137649, 0.190520, 1.000000, 0.512091, 0.153056, 0.441351), y = 9.928612. Current Best y = 9.956667 (Active subspace cluster verified).
+
+### 2. Week 11 Proposed Query Submissions
+- **Function 1**: `1.000000-0.718593` (GP Matern 1.5 ARD, predicted mean = 0.000279 +/- 0.000329)
+- **Function 2**: `0.668342-0.919598` (GP RBF ARD, predicted mean = 0.714822 +/- 0.092851)
+- **Function 3**: `0.012599-0.974551-0.512869` (GP Matern 1.5 ARD, predicted mean = -0.021207 +/- 0.048435)
+- **Function 4**: `0.384096-0.428937-0.398021-0.337853` (GP Matern 1.5 ARD, predicted mean = 0.268507 +/- 0.180809)
+- **Function 5**: `0.994502-0.991348-0.009326-0.990912` (GP Matern 1.5 ARD, predicted mean = 2422.689961 +/- 1776.979664)
+- **Function 6**: `0.500492-0.302059-0.623995-0.749921-0.120259` (GP Matern 1.5 ARD, predicted mean = -0.156707 +/- 0.041998)
+- **Function 7**: `0.109984-0.307595-0.307183-0.330717-0.317244-0.697533` (GP Matern 1.5 ARD, predicted mean = 2.368660 +/- 0.088372)
+- **Function 8**: `0.163699-0.206374-0.149274-0.080089-0.831871-0.522949-0.177955-0.223963` (GP Matern 2.5 ARD, predicted mean = 9.953440 +/- 0.030849)
+
+
 

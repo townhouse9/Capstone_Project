@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "Imperial_College_BBO_Capstone",
+  "runtime": {
+    "model": "gemini-3.8-flash",
+    "description": "Optimized configuration for Gemini 3.8 Flash within Google Antigravity. Deprecated sampling parameters are omitted.",
+    "thinking_configuration": {
+      "mode": "adaptive",
+      "default_level": "MEDIUM",
+      "profiles": {
+        "standard_development": {
+          "thinking_level": "MEDIUM",
+          "use_cases": [
+            "Boilerplate code generation",
+            "Routine file editing and formatting",
+            "Script refactoring and CLI argument parsing",
+            "Report drafting and prompt responses"
+          ]
+        },
+        "deep_reasoning_and_debugging": {
+          "thinking_level": "HIGH",
+          "use_cases": [
+            "Mathematical formulation of acquisition functions",
+            "Tensor shape and dimension mismatch resolution (CNN/Transformers)",
+            "Vanishing/exploding gradient analysis",
+            "Covariance matrix conditioning and Cholesky decomposition failure recovery",
+            "Active subspace identification in high-dimensional (6D-8D) landscapes"
+          ]
+        }
+      }
+    }
+  },
+  "rules": {
+    "files": [
+      "GEMINI.md"
+    ]
+  }
+}

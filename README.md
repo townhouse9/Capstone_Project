@@ -13,18 +13,18 @@ This repository implements a modular, surrogate-driven global optimization frame
 
 ### 1.1 Complete Multi-Week Performance Milestones (Weeks 1 to 10)
 
-Over ten iterative cycles, the dataset expanded from an initial 175 samples to 247 total evaluations, delivering four all-time global maximum records in Week 10 alone:
+Over eleven iterative cycles, the dataset expanded from an initial 175 samples to 255 total evaluations, establishing major records including Function 5 at 8662.48 and a brand-new global peak on Function 7 in Week 11:
 
-| Function | Dimension | Initial Samples | Final (W10) Samples | Initial Max y | Week 5 Max y | Current Best y (W10) | Total Gain | Optimization Status & Milestones |
+| Function | Dimension | Initial Samples | Final (W11) Samples | Initial Max y | Week 5 Max y | Current Best y (W11) | Total Gain | Optimization Status & Milestones |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Function 1** | 2D | 10 | 19 | 7.71e-16 | 7.71e-16 | **0.000000** | Baseline | Bounded upper ridge; plateau confirmed |
-| **Function 2** | 2D | 10 | 19 | 0.611205 | 0.664342 | **0.676790** | +0.0656 | 🚀 **New Global Record** (local ascent) |
-| **Function 3** | 3D | 15 | 24 | -0.034835 | -0.012927 | **-0.004807** | +0.0300 | Central mode isolated and bounded |
-| **Function 4** | 4D | 30 | 39 | -4.025542 | +0.367529 | **+0.367529** | +4.3931 | Needle-in-a-haystack positive island verified |
-| **Function 5** | 4D | 20 | 29 | 1088.859618 | 2921.374749 | **8662.482500** | **+7573.62** | 🌟 **Colossal Peak Record** (vertex exploitation) |
-| **Function 6** | 5D | 20 | 29 | -0.714265 | -0.305461 | **-0.208432** | +0.5058 | 🚀 **New Global Record** (MLP & Matérn ARD) |
-| **Function 7** | 6D | 30 | 39 | 1.364968 | 1.364968 | **2.233318** | +0.8683 | High-yield multi-modal basin cluster mapped |
-| **Function 8** | 8D | 40 | 49 | 9.598482 | 9.929387 | **9.956667** | +0.3582 | 🚀 **New All-Time Peak Record** (active subspace) |
+| **Function 1** | 2D | 10 | 20 | 7.71e-16 | 7.71e-16 | **0.000000** | Baseline | Bounded upper ridge; plateau confirmed |
+| **Function 2** | 2D | 10 | 20 | 0.611205 | 0.664342 | **0.676790** | +0.0656 | High plateau confirmed |
+| **Function 3** | 3D | 15 | 25 | -0.034835 | -0.012927 | **-0.004807** | +0.0300 | Central mode isolated and bounded |
+| **Function 4** | 4D | 30 | 40 | -4.025542 | +0.367529 | **+0.367529** | +4.3931 | Positive centroid island verified stable |
+| **Function 5** | 4D | 20 | 30 | 1088.859618 | 2921.374749 | **8662.482500** | **+7573.62** | 🌟 Colossal Peak Record (vertex ridge) |
+| **Function 6** | 5D | 20 | 30 | -0.714265 | -0.305461 | **-0.208432** | +0.5058 | High plateau mapped |
+| **Function 7** | 6D | 30 | 40 | 1.364968 | 1.364968 | **2.337795** | +0.9728 | 🚀 **New All-Time Record Global High** |
+| **Function 8** | 8D | 40 | 50 | 9.598482 | 9.929387 | **9.956667** | +0.3582 | Elite active subspace sustained |
 
 ---
 
@@ -159,20 +159,20 @@ python bbo.py --week 10
 
 ---
 
-## 5. Summary of Current Proposed Queries (Week 10 / Round 11)
+## 5. Summary of Current Proposed Queries (Week 11 / Round 12)
 
 All coordinates strictly adhere to the project brief format (`0.xxxxxx` with six decimal places, hyphen-delimited):
 
 | Function | Dimension | Current Best y | Status / Milestone | Winning Surrogate | Proposed Next Query String (`x1-x2-...-xn`) | Predicted Next y |
 | :--- | :---: | :---: | :--- | :--- | :--- | :--- |
-| **Function 1** | 2D | 0.000000 | Upper boundary mapped | GP (Matern 1.5 ARD) | `0.371859-0.929648` | -0.000115 +/- 0.000826 |
-| **Function 2** | 2D | **0.676790** | 🚀 New Global Best | GP (Matern 1.5 ARD) | `0.703518-0.859296` | 0.713024 +/- 0.032039 |
-| **Function 3** | 3D | -0.004807 | Central mode bounded | GP (Matern 1.5 ARD) | `0.949325-0.001078-0.518089` | -0.023359 +/- 0.047715 |
-| **Function 4** | 4D | **+0.367529** | Positive Island Confirmed | GP (Matern 1.5 ARD) | `0.403453-0.413199-0.351989-0.334569` | -0.328787 +/- 0.341651 |
-| **Function 5** | 4D | **8662.482500** | 🌟 Colossal All-Time Record | GP (Matern 1.5 ARD) | `0.116862-0.002715-0.002588-0.993106` | 144.086659 +/- 2439.741351 |
-| **Function 6** | 5D | **-0.208432** | 🚀 New Global Best | GP (Matern 1.5 ARD) | `0.430195-0.229586-0.859094-0.680052-0.255631` | -0.296517 +/- 0.087509 |
-| **Function 7** | 6D | **2.233318** | High basin sustained | GP (Matern 1.5 ARD) | `0.116884-0.345081-0.297592-0.363038-0.314334-0.743872` | 2.247187 +/- 0.028582 |
-| **Function 8** | 8D | **9.956667** | 🚀 New All-Time Peak | GP (Matern 2.5 ARD) | `0.000000-0.000000-0.137649-0.190520-1.000000-0.512091-0.153056-0.441351` | 9.959036 +/- 0.038651 |
+| **Function 1** | 2D | 0.000000 | Upper boundary mapped | GP (Matern 1.5 ARD) | `1.000000-0.718593` | 0.000279 +/- 0.000329 |
+| **Function 2** | 2D | **0.676790** | High plateau confirmed | GP (RBF ARD) | `0.668342-0.919598` | 0.714822 +/- 0.092851 |
+| **Function 3** | 3D | -0.004807 | Central mode bounded | GP (Matern 1.5 ARD) | `0.012599-0.974551-0.512869` | -0.021207 +/- 0.048435 |
+| **Function 4** | 4D | **+0.367529** | Positive Island Confirmed | GP (Matern 1.5 ARD) | `0.384096-0.428937-0.398021-0.337853` | 0.268507 +/- 0.180809 |
+| **Function 5** | 4D | **8662.482500** | 🌟 Colossal All-Time Record | GP (Matern 1.5 ARD) | `0.994502-0.991348-0.009326-0.990912` | 2422.689961 +/- 1776.979664 |
+| **Function 6** | 5D | **-0.208432** | High plateau mapped | GP (Matern 1.5 ARD) | `0.500492-0.302059-0.623995-0.749921-0.120259` | -0.156707 +/- 0.041998 |
+| **Function 7** | 6D | **2.337795** | 🚀 **New All-Time Record** | GP (Matern 1.5 ARD) | `0.109984-0.307595-0.307183-0.330717-0.317244-0.697533` | 2.368660 +/- 0.088372 |
+| **Function 8** | 8D | **9.956667** | Elite Subspace Sustained | GP (Matern 2.5 ARD) | `0.163699-0.206374-0.149274-0.080089-0.831871-0.522949-0.177955-0.223963` | 9.953440 +/- 0.030849 |
 
 ---
 
