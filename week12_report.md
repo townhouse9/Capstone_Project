@@ -1,0 +1,34 @@
+# Week 12 (Module 23) Reflection & Strategy Report: Dimensionality, Variance, and Principal Component Insights
+**Imperial College London — Black-Box Optimization (BBO) Capstone**
+
+---
+
+### Master Submission Summary (Week 12 Proposed Queries)
+
+| Function | Dimension | Current Best Output | Week 12 Proposed Submission String (x1-x2-...-xn) | Acquisition & Surrogate Model |
+| :--- | :---: | :---: | :--- | :--- |
+| Function 1 | 2D | 0.000000 | 0.000000-0.542714 | EI via GP (Matern 1.5 ARD) |
+| Function 2 | 2D | 0.676790 | 0.703518-0.809045 | EI via GP (Matern 1.5 ARD) |
+| Function 3 | 3D | -0.004807 | 0.338986-0.990116-0.478208 | EI via GP (Matern 1.5 ARD) |
+| Function 4 | 4D | 0.367529 | 0.425981-0.416886-0.241871-0.303060 | EI via GP (Matern 1.5 ARD) |
+| Function 5 | 4D | 8662.482500 | 0.074148-0.065346-0.032273-0.003204 | EI via GP (Matern 1.5 ARD) |
+| Function 6 | 5D | -0.202865 | 0.490951-0.349626-0.623499-0.762781-0.176298 | EI via GP (Matern 1.5 ARD) |
+| Function 7 | 6D | 2.661908 | 0.160345-0.160327-0.415051-0.291932-0.310658-0.624511 | EI via GP (RBF ARD) |
+| Function 8 | 8D | 9.966558 | 0.139270-0.163006-0.124776-0.196694-0.939630-0.551384-0.204578-0.628883 | EI via GP (Matern 2.5 ARD) |
+
+---
+
+### Question 1: How has your optimisation strategy evolved since your first few rounds of queries? Which elements now feel more structured or systematic?
+Our optimisation strategy has matured from tentative, isotropic quasi-random exploration into an empirically grounded, variance-aware Bayesian decision framework. During our initial rounds, when sparse observations precluded reliable manifold approximation, sampling was dominated by broad Latin Hypercube sweeps characterised by uniform spatial priors and high epistemic uncertainty across all dimensions. With more than twenty cumulative observations per function now catalogued, our methodology operates with rigorous structural discipline, systematically executing multi-model five-fold cross-validation to benchmark Gaussian Process kernels against tree ensembles and neural regressors. Furthermore, integrating Automatic Relevance Determination has replaced unguided perturbation with anisotropic candidate generation, whilst strict Euclidean distance de-duplication and safeguard acquisition thresholds ensure that each strictly budgeted query targets genuinely informative topological coordinates rather than redundant regions.
+
+### Question 2: If you think of your current data set as a ‘high-dimensional’ space, which variables or behaviours seem to drive the largest variation in your results – similar to principal components in PCA?
+Analogous to how principal components isolate the dominant eigenvectors of sample covariance, our accumulated evaluations indicate that performance variation is concentrated along low-dimensional active subspaces rather than dispersed equally across all coordinate axes. In Function 8, which spans eight nominal dimensions, the primary axis of variation is governed almost entirely by an active subspace where the first two coordinates collapse towards zero while the fifth coordinate ascends towards unity, unlocking our latest record peak of 9.966558 whilst orthogonal dimensions exhibit far broader tolerance. Similarly, in Function 7, extreme performance swings from negative penalties to our unprecedented record of 2.661908 are driven by coupled variations along the first, second, and sixth dimensions, and Function 5 exhibits a dominant directional gradient pointing toward the upper corner vertex, confirming that a small subset of dominant directions dictates the vast majority of objective variance.
+
+### Question 3: How do you decide which aspects of your strategy to keep exploring versus which to reduce or simplify, as PCA reduces dimensions while retaining essential information?
+Just as Principal Component Analysis discards trailing components with negligible eigenvalues to preserve essential structural variance, we utilise surrogate lengthscale telemetry and cross-validation sensitivity metrics to compress our operational search space. When Automatic Relevance Determination assigns large characteristic lengthscales to specific coordinates, signifying that objective variation along those axes is minimal, we effectively project our candidate generation onto the remaining sensitive sub-manifold by freezing or narrowing perturbation bounds along the uninformative dimensions. Conversely, dimensions exhibiting short lengthscales and steep gradient variance are aggressively prioritised for targeted resolution refinement. Simultaneously, we simplify our surrogate modeling pool by discarding non-competitive architectures, retaining only well-calibrated Gaussian Process formulations that capture true underlying response geometry with minimal parameter bloat.
+
+### Question 4: How might this round of optimisation influence your next and final round of query submission in Module 24, especially when balancing exploration and exploitation?
+Securing three all-time record highs in this twelfth round across Functions 6, 7, and 8 profoundly impacts our terminal strategy for Module 24 by shifting our operational objective decisively towards pure exploitation. Because the impending round represents the terminal evaluation of the entire campaign, the future value of acquiring exploratory information drops to zero, rendering speculative variance-seeking irrational under finite-horizon decision theory. Having successfully resolved the principal topological basins through this week's breakthrough outputs, our final submission strategy will compress candidate sampling radii tightly around our top-performing centroids, lower exploration parameters within our acquisition functions, and allocate our remaining queries exclusively to fine-grained gradient ascent within confirmed global peaks.
+
+### Question 5: Reflect briefly on how insights from PCA, such as focusing on variance and removing redundancy, might apply to how you interpret your BBO results?
+Interpreting our black-box optimisation trajectory through the lens of Principal Component Analysis reinforces the principle that apparent high-dimensional complexity often conceals a much simpler intrinsic manifold. Recognising that substantial portions of the unit hypercube represent low-variance noise or redundant coordinate combinations prevents us from succumbing to the curse of dimensionality, encouraging us to interpret historical trajectories along true functional eigenvectors rather than raw Euclidean coordinates. By filtering out collinear candidate proposals through distance de-duplication and concentrating computational budget exclusively along orthogonal axes of meaningful objective variation, we extract maximal signal from minimal evaluations, ensuring that every individual query delivers genuine informational progress.
