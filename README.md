@@ -179,6 +179,7 @@ All coordinates strictly adhere to the project brief format (`0.xxxxxx` with six
 ## 6. Project Governance, Governance Artifacts & Transparency
 
 In compliance with open science, ethical AI, and reproducibility guidelines:
-- **Datasheet**: Refer to [`DATASHEET.md`](DATASHEET.md) for full dataset provenance, composition (247 samples), collection methodology, and usage terms following the Gebru et al. framework.
+- **Datasheet**: Refer to [`DATASHEET.md`](DATASHEET.md) for full dataset provenance, composition (263 samples across 8 functions), collection methodology, and usage terms following the Gebru et al. framework.
 - **Model Card**: Refer to [`MODEL_CARD.md`](MODEL_CARD.md) for detailed architectural documentation, intended domains, constraints, and ethical considerations following the Mitchell et al. framework.
 - **Weekly Progression Logs**: Refer to [`bbo_weekly_tracking.md`](bbo_weekly_tracking.md) and individual `weekX_report.md` documents for round-by-round reflective analyses, hyperparameter studies, and LLM-augmented strategy derivations.
+- **Presentation Deck**: Refer to [`presentation_slides.md`](presentation_slides.md) for executive slide narratives covering project objectives, strategic evolution, topographical insights, and final-round planning.
