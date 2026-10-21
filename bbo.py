@@ -553,7 +553,7 @@ def generate_weekly_summary_dashboard(summary_results, current_week_label=None):
 
 def main():
     parser = argparse.ArgumentParser(description="Unified BBO Master Optimization Engine")
-    parser.add_argument("--week", type=int, default=12, help="Current optimization week round (default: 12)")
+    parser.add_argument("--week", type=int, default=13, help="Current optimization week round (default: 13)")
     args = parser.parse_args()
 
     current_week = args.week
