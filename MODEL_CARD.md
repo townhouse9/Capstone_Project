@@ -1,72 +1,67 @@
 # Model Card: Adaptive Multi-Surrogate Bayesian Optimisation with ARD
 
-Following the standardized model card framework proposed by Mitchell et al. (2019) and structured in Mini-lesson 21.2, this document describes the architecture, intended application, multi-round evolution, empirical performance, and governance of the black-box optimisation system.
+Following the standardised model card framework proposed by Mitchell et al. (2019) and introduced in Module 21, this document details the architecture, intended use, multi-week evolution, final empirical performance (through Week 13 / Module 24), limitations, and governance of our Black-Box Optimisation system.
 
 ---
 
 ## 1. Model Details
 
-- **Model Name**: Adaptive Multi-Surrogate Bayesian Optimiser with Automatic Relevance Determination (BBO-ARD-MSB).
-- **Model Type**: Sequential Model-Based Global Optimisation (SMBO) / Active Learning Pipeline.
-- **Model Version**: 2.1 (Modular production release in `bbo.py`).
-- **Developers**: Capstone Engineering Team, Imperial College London / Emeritus Programme.
-- **Underlying Algorithms**:
-  - Primary Probabilistic Surrogate: Gaussian Process Regression with dimension-specific anisotropic Matérn (nu = 1.5, 2.5) and Radial Basis Function (RBF) kernels fitted via multi-restart L-BFGS-B maximum marginal likelihood estimation.
-  - Benchmarking Regressors: Random Forest, Extra Trees, Gradient Boosting, Polynomial Ridge (degree = 2), and Multi-Layer Perceptron (MLP) Neural Networks evaluated through 5-fold cross-validation.
-  - Acquisition Engines: Expected Improvement (EI) with range-scaled exploration parameter (xi = 0.01 * y_range), transitioning to Upper Confidence Bound (UCB, beta = 2.576) in flat regions.
+- **Model Name**: Adaptive Multi-Surrogate Bayesian Optimiser with Automatic Relevance Determination (`BBO-ARD-MSB`).
+- **Model Type**: Sequential Model-Based Global Optimisation (SMBO) and Active Learning Pipeline.
+- **Model Version**: 3.0 — Final Capstone Release (implemented in [`bbo.py`](bbo.py) and interactive notebook [`BBO_Capstone_Walkthrough.ipynb`](BBO_Capstone_Walkthrough.ipynb)).
+- **Developers**: Capstone Engineering Team, Imperial College London Machine Learning & AI Programme.
+- **Core Algorithmic Components**:
+  - **Primary Probabilistic Surrogates**: Anisotropic Gaussian Process Regressors (`GaussianProcessRegressor`) using dimension-specific Automatic Relevance Determination (ARD) kernels (`Matérn nu=1.5`, `Matérn nu=2.5`, and `RBF`) scaled by a constant kernel and optimised via 15 restarts of `L-BFGS-B`.
+  - **Cross-Validation Benchmark Suite**: 5-fold cross-validation tournament evaluating ARD Gaussian Processes alongside `ExtraTreesRegressor` (100 trees), `RandomForestRegressor` (100 trees), `GradientBoostingRegressor` (50 trees), quadratic `PolynomialFeatures + Ridge`, and a two-layer `MLPRegressor` `(64, 32)` with ReLU activation and L2 regularisation (`alpha = 1e-3`).
+  - **Candidate Generation & Acquisition**: Hybrid 30,000-point candidate generator (70% Quasi-Monte Carlo Latin Hypercube Sampling + 30% multi-scale Gaussian trust-region perturbations around the top-3 historical maxima), Euclidean distance de-duplication (`min_dist = 0.005`), and Expected Improvement (`xi = 0.01 * y_range`) with automatic Upper Confidence Bound (`beta = 2.576`) fallback.
 
 ---
 
 ## 2. Intended Use
 
-- **Primary Application**: Global optimisation of continuous, non-convex, derivative-free black-box functions evaluated under constrained query budgets where individual function evaluations are expensive, noisy, or time-delayed.
-- **Suitable Domains**: Hyperparameter optimisation in machine learning, engineering design search, algorithmic tuning, and experimental design in physical laboratories.
-- **Out-of-Scope / Prohibited Uses**:
-  - High-throughput discrete combinatorial optimisation without continuous relaxation.
-  - Safety-critical real-time control systems where millisecond inference is mandatory and sub-optimal queries induce catastrophic physical failure.
-  - Unbounded continuous optimisation without domain constraints.
+- **Primary Application**: Derivative-free global optimisation of expensive, non-convex, black-box functions over bounded continuous domains `(0.0, 1.0)^d` where query budgets are severely restricted (10 to 55 total evaluations).
+- **Target Audience**: Machine learning engineers, experimental scientists, and peer reviewers exploring sample-efficient optimisation, hyperparameter tuning, and automated experimental design.
+- **Out-of-Scope Uses**:
+  - High-dimensional raw perceptual inputs (e.g. raw pixel arrays or text tokens) without prior latent embedding.
+  - Unconstrained real-time industrial control without hardware safety interlocks, as exploratory queries can intentionally probe high-variance boundary regions.
 
 ---
 
-## 3. Methodological Details and Multi-Round Evolution
+## 3. Methodological Evolution (Weeks 1 to 13)
 
-Across ten iterative rounds, the optimisation approach evolved across three major phases:
-1. **Initial Space-Filling & Exploration (Rounds 1–3)**: Established initial landscape coverage using Latin Hypercube Sampling (QMC), benchmarking random forests against isotropic Gaussian Processes.
-2. **Bayesian Transition & Surrogate Benchmarking (Rounds 4–6)**: Formalised automated 5-fold cross-validation across competing regressors to determine the best surrogate family per function. Introduced Expected Improvement and explored neural network surrogate approximations.
-3. **Anisotropic ARD, Trust-Region Perturbation, and Active Subspace Exploitation (Rounds 7–10)**: Upgraded Gaussian Processes to Automatic Relevance Determination (ARD) to learn dimension-specific lengthscales, implemented TuRBO-inspired candidate generation (70% global LHS, 30% local Gaussian perturbation around top-3 historical optima), and enforced a minimum Euclidean distance filter (min_dist = 0.005) to eliminate redundant sampling.
-
----
-
-## 4. Empirical Performance Across Benchmark Functions
-
-Surrogate model selection was guided by 5-fold cross-validation Mean Squared Error (CV-MSE) and coefficient of determination (CV-R2). Performance culminated in four simultaneous global records in Round 10:
-
-- **Function 1 (2D)**: Mapped plateau boundary; current best y = 0.000000.
-- **Function 2 (2D)**: Selected Matérn 1.5 ARD (CV-R2 = 0.423); achieved new global best y = 0.676790.
-- **Function 3 (3D)**: Selected Matérn 1.5 ARD (CV-MSE = 0.0069); bounded central peak mode at y = -0.004807.
-- **Function 4 (4D)**: Selected Matérn 1.5 ARD (CV-R2 = 0.949); isolated needle-in-a-haystack positive peak island at y = 0.367529, successfully recovering to y = 0.013954 after deep valley descent.
-- **Function 5 (4D)**: Selected Matérn 1.5 ARD; surged to an all-time record of y = 8662.482500 by exploiting the upper vertex (1.0, 1.0, 1.0, 1.0).
-- **Function 6 (5D)**: Selected Matérn 1.5 ARD (CV-R2 = 0.871); reached new global best y = -0.208432.
-- **Function 7 (6D)**: Selected Matérn 1.5 ARD (CV-R2 = 0.558); sustained high-yield basin at y = 2.233318.
-- **Function 8 (8D)**: Selected Matérn 2.5 ARD (CV-R2 = 0.987); unlocked an all-time record of y = 9.956667 by exploiting low-dimensional active subspaces.
+1. **Phase 1 — Baseline Exploration & Conditioning (Weeks 1–3)**: Deployed isotropic Gaussian Processes and tree ensembles over random grids. Identified covariance conditioning bottlenecks and introduced target standardisation (`normalize_y=True`) and adaptive Cholesky jitter (`alpha`).
+2. **Phase 2 — Multi-Surrogate Cross-Validation & Neural Baselines (Weeks 4–6)**: Built an automated 5-fold CV benchmarking harness comparing GP kernels against regularized MLPs, Polynomial Ridge, and tree ensembles, binding the lowest-MSE GP kernel per function to preserve calibrated posterior variance.
+3. **Phase 3 — Anisotropic ARD & Hybrid Trust-Region Sampling (Weeks 7–10)**: Replaced scalar lengthscales with vector ARD lengthscales `(l_1, ..., l_d)` to prune inactive dimensions in 5D–8D spaces, paired with a 70/30 QMC Latin Hypercube and local Gaussian trust-region sampler. Unlocked the `8662.482500` vertex peak on Function 5.
+4. **Phase 4 — Unsupervised Subspace Diagnostics & Horizon-Aware Exploitation (Weeks 11–13)**: Integrated clustering, PCA active-subspace inspection, and RL-inspired value-refinement strategies, achieving three consecutive all-time record breakthroughs on Functions 6, 7, and 8 in the final rounds.
 
 ---
 
-## 5. Assumptions, Constraints, and Limitations
+## 4. Final Empirical Performance (Week 13 / 271 Total Evaluations)
 
-- **Stationarity & Continuity**: The surrogate assumes objective functions exhibit spatial autocorrelation and continuous local gradients. Discontinuous step changes or Dirac-like delta functions violate these assumptions.
-- **Curse of Dimensionality & Sparsity**: With 49 samples in 8 dimensions, Gaussian Processes risk overfitting lengthscales to early points, leaving vast volumes of the hypercube unvisited.
-- **Exploitation Bias**: The acquisition engine heavily favours refining confirmed high-yield basins, creating epistemic blind spots in unexplored interior regions.
+Evaluated via 5-fold cross-validation (`CV_MSE_Mean` and `CV_R2_Mean`) and cumulative global optimization gain from Week 1 to Week 13:
+
+| Function | Dim | Samples (Init -> Final) | Winning GP Kernel | Final Best `y` | Total Gain | Final Topographical & Performance Summary |
+| :--- | :---: | :---: | :--- | :---: | :---: | :--- |
+| **Function 1** | 2D | 10 -> 22 | GP (Matérn 2.5 ARD) | `0.000000` | Baseline | Mapped upper boundary; flat zero plateau confirmed (`CV MSE < 1e-6`). |
+| **Function 2** | 2D | 10 -> 22 | GP (Matérn 1.5 ARD) | **`0.676790`** | `+0.0656` | High plateau isolated and verified (`CV R2 = 0.252` under observational noise). |
+| **Function 3** | 3D | 15 -> 27 | GP (Matérn 1.5 ARD) | **`-0.004807`** | `+0.0300` | Central peak mode tightly bounded (`CV MSE = 0.0061`). |
+| **Function 4** | 4D | 30 -> 42 | GP (Matérn 1.5 ARD) | **`+0.367529`** | `+4.3931` | Isolated narrow positive island (`CV R2 = 0.946`); verified sharp cliff boundaries. |
+| **Function 5** | 4D | 20 -> 32 | GP (Matérn 1.5 ARD) | **`8662.482500`** | **`+7573.62`** | Colossal global peak reached at upper vertex `(1.0, 1.0, 1.0, 1.0)`. |
+| **Function 6** | 5D | 20 -> 32 | GP (Matérn 1.5 ARD) | **`-0.089540`** | `+0.6247` | All-time record high in Week 13 (`CV R2 = 0.788`). |
+| **Function 7** | 6D | 30 -> 42 | GP (RBF ARD) | **`3.227650`** | `+1.8627` | All-time record high in Week 13 (`CV R2 = 0.678`). |
+| **Function 8** | 8D | 40 -> 52 | GP (Matérn 2.5 ARD) | **`9.981970`** | `+0.3835` | All-time record peak in Week 13 (`CV R2 = 0.989` via ARD active subspace). |
 
 ---
 
-## 6. Ethical Considerations & Reproducibility
+## 5. Limitations, Biases, and Trade-Offs
 
-- **Transparency and Open Science**: To ensure complete scientific reproducibility, all random seeds (seed 42), candidate generation pipelines, hyperparameter bounds, and raw telemetry are preserved in the open repository without proprietary obfuscation.
-- **Responsible Deployment**: Users adapting this system for real-world automated experimentation (e.g. chemical synthesis or robotics) must integrate hardware safety limits and domain-specific constraint checks to prevent physical harm from unconstrained acquisition exploration.
+- **Needle-in-a-Haystack Blindness (Function 1)**: When a function is identically zero across 99% of its domain and exhibits a discontinuity narrower than the sampling grid, Gaussian Process lengthscales flatten out and Expected Improvement collapses (`< 1e-12`), requiring UCB fallback or space-filling exploration.
+- **Sharp Cliff Sensitivity (Function 4)**: Stepping even `0.05` units outside a narrow positive centroid in 4D can drop the objective from `+0.367` to `-2.360`, highlighting the risk of late-stage exploratory variance seeking.
+- **Active Exploitation Bias**: Because 30% of candidates cluster around the top-3 historical points, the surrogate achieves high fidelity near known optima but retains higher epistemic uncertainty in unvisited corners of 6D–8D space.
 
 ---
 
-## 7. Architectural Reflection
+## 6. Ethical Considerations, Transparency & Reproducibility
 
-The decision-making architecture dynamically combines multi-model empirical cross-validation with probabilistic active learning, ensuring every query is statistically justified rather than heuristically guessed. While incorporating deeper theoretical descriptions (such as full Hessian matrix derivations) could be considered, the current structure provides an optimal balance of operational clarity, mathematical rigor, and reproducible implementation for researchers and industry practitioners alike.
+- **Deterministic Reproducibility**: All stochastic components (K-Fold splits, L-BFGS-B restarts, Latin Hypercube samplers, and local Gaussian perturbations) are explicitly seeded (`random_state=42` / `seed=42`).
+- **Safety in Physical Deployment**: When adapting this pipeline to wet-lab chemistry, clinical dosing, or industrial hardware tuning, practitioners must pair acquisition maximisation with explicit safety constraints (e.g. SafeOpt / constrained Bayesian optimisation) so that exploratory probes never violate safe operating envelopes.

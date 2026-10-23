@@ -1,7 +1,13 @@
 # Black-Box Optimization (BBO) Capstone Project
-**Imperial College London - Machine Learning & AI Capstone (Modules 12–24)**
+**Imperial College London - Machine Learning & AI Capstone (Modules 12–25)**
 
 An automated, robust, and reproducible machine learning pipeline for sample-efficient black-box optimization (BBO) across 8 continuous benchmark functions spanning 2D to 8D input domains under strict physical evaluation budgets (one query per function per weekly round).
+
+---
+
+## Non-Technical Summary (General Audience Overview)
+
+Imagine trying to find the highest peak across eight invisible mountain ranges while blindfolded, allowed only one altitude measurement per mountain each week. This project solves that challenge—known as **Black-Box Optimisation**—where testing a single setting in engineering design, clinical dosing, or artificial intelligence tuning is slow and expensive. Across twelve weekly rounds, our system combined statistical maps called Gaussian Processes with machine learning models to predict both where the highest peaks sit and where unexplored blind spots remain. By automatically identifying which control dials mattered most, our pipeline achieved major breakthroughs across the benchmarks, including a massive 8,662.48 peak on Function 5 and three consecutive all-time records in the final round.
 
 ---
 
@@ -93,32 +99,34 @@ Candidates violating this threshold are automatically pruned, ensuring every wee
 
 ---
 
-## 3. Repository Directory Structure
+## 3. Repository Directory Structure & Dataset Hosting Note
+
+> **Dataset Storage Policy**: The complete dataset across all 8 functions (`271` total coordinate-evaluation pairs stored as binary `.npy` arrays inside `function_1/` through `function_8/`) occupies less than `50 KB` on disk and is hosted directly in this repository for one-click reproducibility. No external large-file storage is required.
 
 ```
 .
-|-- README.md                             # Master project overview and architecture documentation
-|-- DATASHEET.md                          # Comprehensive dataset datasheet (Gebru et al. framework)
-|-- MODEL_CARD.md                         # Detailed optimization model card (Mitchell et al. framework)
-|-- bbo.py                                # Unified, production-grade master optimization engine (CLI-enabled)
-|-- bbo_pipeline.py                       # Legacy weekly pipeline script (preserved for backward compatibility)
-|-- bbo_weekly_tracking.md                # Comprehensive weekly progression log and reflection answers
-|-- weekly_progress_history.json          # Multi-week historical benchmark telemetry
-|-- week13_summary.json                   # Serialized model metrics and final proposed queries for Week 13
-|-- week13_report.md                      # Dedicated Week 13 (Module 24) RL & final critical reflection report
-|-- week12_report.md                      # Dedicated Week 12 (Module 23) PCA & dimensionality reflection report
-|-- week11_report.md                      # Dedicated Week 11 (Module 22) clustering lens reflection report
-|-- week10_report.md ... week1_report.md  # Dedicated earlier weekly reflection reports
-|-- capstone_project_brief.docx           # Imperial College Capstone project brief
+|-- README.md                                # Master project overview, non-technical summary, and documentation
+|-- BBO_Capstone_Walkthrough.ipynb           # Interactive Jupyter Notebook walkthrough presenting method & results
+|-- DATASHEET.md                             # Comprehensive dataset datasheet (Gebru et al. framework, finalised W13)
+|-- MODEL_CARD.md                            # Detailed optimization model card (Mitchell et al. framework, finalised W13)
+|-- bbo.py                                   # Unified, production-grade master optimization engine (CLI-enabled)
+|-- bbo_pipeline.py                          # Legacy weekly pipeline script (preserved for backward compatibility)
+|-- BBO_capstone_project_presentation_v2.pdf # Executive capstone presentation deck (PDF)
+|-- presentation_slides.md                   # Executive capstone presentation slide narratives (Markdown)
+|-- bbo_weekly_tracking.md                   # Comprehensive weekly progression log and reflection answers
+|-- weekly_progress_history.json             # Multi-week historical benchmark telemetry
+|-- week13_summary.json                      # Serialized model metrics and final proposed queries for Week 13
+|-- week13_report.md ... week2_report.md     # Dedicated weekly reflection & strategy reports (Modules 12-24)
+|-- capstone_project_brief.docx              # Imperial College Capstone project brief
 |
-|-- function_1/ ... function_8/           # Function datasets (Inputs & Outputs)
-|   |-- initial_inputs.npy                # Evaluated input coordinate vectors in [0, 1]^d (N = 22 to 52)
-|   `-- initial_outputs.npy               # Evaluated scalar output values y
+|-- function_1/ ... function_8/              # Function datasets (Inputs & Outputs)
+|   |-- initial_inputs.npy                   # Evaluated input coordinate vectors in [0, 1]^d (N = 22 to 52)
+|   `-- initial_outputs.npy                  # Evaluated scalar output values y
 |
-`-- visualizations/                       # Auto-generated diagnostic plots and master dashboard
-    |-- weekly_progress_summary.png       # 4-panel master weekly dashboard
-    |-- function_1_week13.png ...         # 4-panel 2D GP landscape and acquisition maps
-    `-- function_8_week13.png             # 4-panel high-D sensitivity slices and feature importances
+`-- visualizations/                          # Auto-generated diagnostic plots and master dashboard
+    |-- weekly_progress_summary.png          # 4-panel master weekly dashboard
+    |-- function_1_week13.png ...            # 4-panel 2D GP landscape and acquisition maps
+    `-- function_8_week13.png                # 4-panel high-D sensitivity slices and feature importances
 ```
 
 ---
@@ -138,8 +146,8 @@ To run the unified optimization engine for the final round (Week 13 / Module 24)
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/bbo-capstone.git
-cd bbo-capstone
+git clone https://github.com/townhouse9/Capstone_Project.git
+cd Capstone_Project
 
 # Create and activate virtual environment
 python -m venv .venv
@@ -174,7 +182,8 @@ All coordinates strictly adhere to the project brief format (`0.xxxxxx` with six
 ## 6. Project Governance, Governance Artifacts & Transparency
 
 In compliance with open science, ethical AI, and reproducibility guidelines:
+- **Interactive Notebook Walkthrough**: Open [`BBO_Capstone_Walkthrough.ipynb`](BBO_Capstone_Walkthrough.ipynb) for an interactive Jupyter Notebook presentation of the methodology, 5-fold cross-validation tables, and visualisations.
 - **Datasheet**: Refer to [`DATASHEET.md`](DATASHEET.md) for full dataset provenance, composition (271 samples across 8 functions), collection methodology, and usage terms following the Gebru et al. framework.
 - **Model Card**: Refer to [`MODEL_CARD.md`](MODEL_CARD.md) for detailed architectural documentation, intended domains, constraints, and ethical considerations following the Mitchell et al. framework.
 - **Weekly Progression Logs**: Refer to [`bbo_weekly_tracking.md`](bbo_weekly_tracking.md) and individual `weekX_report.md` documents for round-by-round reflective analyses, hyperparameter studies, and LLM-augmented strategy derivations.
-- **Presentation Deck**: Refer to [`presentation_slides.md`](presentation_slides.md) for executive slide narratives covering project objectives, strategic evolution, topographical insights, and final-round planning.
+- **Presentation Materials**: Refer to [`BBO_capstone_project_presentation_v2.pdf`](BBO_capstone_project_presentation_v2.pdf) and [`presentation_slides.md`](presentation_slides.md) for executive slide narratives covering project objectives, strategic evolution, topographical insights, and final-round planning.
