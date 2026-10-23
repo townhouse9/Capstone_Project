@@ -1,27 +1,27 @@
-# Black-Box Optimization (BBO) Capstone Project
+# Black-Box Optimisation (BBO) Capstone Project
 **Imperial College London - Machine Learning & AI Capstone (Modules 12–25)**
 
-An automated, robust, and reproducible machine learning pipeline for sample-efficient black-box optimization (BBO) across 8 continuous benchmark functions spanning 2D to 8D input domains under strict physical evaluation budgets (one query per function per weekly round).
+An automated, robust, and reproducible machine learning pipeline for sample-efficient black-box optimisation (BBO) across 8 continuous benchmark functions spanning 2D to 8D input domains under strict physical evaluation budgets (one query per function per weekly round).
 
 ---
 
 ## Non-Technical Summary (General Audience Overview)
 
-Imagine trying to find the highest peak across eight invisible mountain ranges while blindfolded, allowed only one altitude measurement per mountain each week. This project solves that challenge—known as **Black-Box Optimisation**—where testing a single setting in engineering design, clinical dosing, or artificial intelligence tuning is slow and expensive. Across twelve weekly rounds, our system combined statistical maps called Gaussian Processes with machine learning models to predict both where the highest peaks sit and where unexplored blind spots remain. By automatically identifying which control dials mattered most, our pipeline achieved major breakthroughs across the benchmarks, including a massive 8,662.48 peak on Function 5 and three consecutive all-time records in the final round.
+Imagine trying to find the highest peak across eight invisible mountain ranges while blindfolded, allowed only one altitude measurement per mountain each week.  This project solves that challenge (known as **Black-Box Optimisation**) where testing a single setting in engineering design, clinical dosing, or artificial intelligence tuning is slow and expensive.  Across twelve weekly rounds, our system combined statistical maps called Gaussian Processes with machine learning models to predict both where the highest peaks sit and where unexplored blind spots remain.  By automatically identifying which control dials mattered most, our pipeline achieved major breakthroughs across the benchmarks, including a massive 8,662.48 peak on Function 5 and three consecutive all-time records in the final round.
 
 ---
 
-## 1. Executive Summary & Optimization Trajectory
+## 1. Executive Summary & Optimisation Trajectory
 
-This repository implements a modular, surrogate-driven global optimization framework. Across twelve sequential weekly evaluation rounds (culminating in Module 24's final query submission), the system dynamically benchmarks probabilistic Gaussian Processes against deterministic machine learning surrogates (Neural Networks / Multi-Layer Perceptrons, Extra Trees, Random Forests, Gradient Boosting, and Polynomial Ridge Regression), computing active learning acquisition functions (Expected Improvement, Upper Confidence Bound) over hybrid candidate pools to guide high-yield query selection.
+This repository implements a modular, surrogate-driven global optimisation framework.  Across twelve sequential weekly evaluation rounds (culminating in Module 24's final query submission), the system dynamically benchmarks probabilistic Gaussian Processes against deterministic machine learning surrogates (Neural Networks / Multi-Layer Perceptrons, Extra Trees, Random Forests, Gradient Boosting, and Polynomial Ridge Regression), computing active learning acquisition functions (Expected Improvement, Upper Confidence Bound) over hybrid candidate pools to guide high-yield query selection.
 
-![Weekly Progress Master Dashboard](visualizations/weekly_progress_summary.png)
+![Weekly Progress Master Dashboard](visualisations/weekly_progress_summary.png)
 
 ### 1.1 Complete Multi-Week Performance Milestones (Weeks 1 to 13)
 
 Over twelve iterative evaluation cycles, the dataset expanded from an initial 175 samples to 271 total evaluations (reaching 22 samples on 2D functions and up to 52 samples on 8D functions), establishing major records including Function 5 at 8662.48 and three consecutive all-time record breakthroughs on Functions 6, 7, and 8 in the final rounds:
 
-| Function | Dimension | Initial Samples | Final (W13) Samples | Initial Max y | Week 6 Max y | Current Best y (W13) | Total Gain | Optimization Status & Milestones |
+| Function | Dimension | Initial Samples | Final (W13) Samples | Initial Max y | Week 6 Max y | Current Best y (W13) | Total Gain | Optimisation Status & Milestones |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
 | **Function 1** | 2D | 10 | 22 | 7.71e-16 | 7.71e-16 | **0.000000** | Baseline | Bounded upper ridge; plateau confirmed |
 | **Function 2** | 2D | 10 | 22 | 0.611205 | 0.664342 | **0.676790** | +0.0656 | High plateau confirmed |
@@ -49,9 +49,9 @@ While Weeks 1 through 5 established initial baselines using isotropic Gaussian P
 +-------------------------------------------------------------------------------------------------------+
 |                             SURROGATE BENCHMARKING (5-Fold Cross-Validation)                          |
 |  - GP with Automatic Relevance Determination (ARD Matérn 1.5, Matérn 2.5, RBF)                       |
-|  - Multi-Layer Perceptron Neural Networks (MLP: 64-32, ReLU, Adaptive L2 Regularization)             |
+|  - Multi-Layer Perceptron Neural Networks (MLP: 64-32, ReLU, Adaptive L2 Regularisation)             |
 |  - Tree Ensembles: Random Forest (150 trees), Extra Trees (150 trees), Gradient Boosting (100 trees)  |
-|  - Polynomial Ridge Regression (quadratic interaction expansion + L2 regularization)                  |
+|  - Polynomial Ridge Regression (quadratic interaction expansion + L2 regularisation)                  |
 +---------------------------------------------------+---------------------------------------------------+
                                                     |
                                                     v
@@ -59,7 +59,7 @@ While Weeks 1 through 5 established initial baselines using isotropic Gaussian P
 |                                     ADAPTIVE GP SURROGATE SELECTION                                   |
 |  - Evaluates CV Mean Squared Error (MSE) and CV R-squared across all models                           |
 |  - Dynamically binds the winning GP kernel family (Matérn 1.5, 2.5, or RBF) for Bayesian Acquisition  |
-|  - Re-fits selected GP with 15 restarts of L-BFGS-B optimizer for global parameter convergence      |
+|  - Re-fits selected GP with 15 restarts of L-BFGS-B optimiser for global parameter convergence      |
 +---------------------------------------------------+---------------------------------------------------+
                                                     |
                                                     v
@@ -82,9 +82,9 @@ While Weeks 1 through 5 established initial baselines using isotropic Gaussian P
 ```
 
 ### 2.1 Automatic Relevance Determination (ARD)
-Early rounds utilised isotropic kernels with a uniform scalar lengthscale. In high dimensions (Functions 5, 7, and 8), input dimensions have drastically unequal impacts on the objective. Upgrading to ARD in `bbo.py` assigned dimension-specific lengthscales:
+Early rounds utilised isotropic kernels with a uniform scalar lengthscale.  In high dimensions (Functions 5, 7, and 8), input dimensions have drastically unequal impacts on the objective.  Upgrading to ARD in `bbo.py` assigned dimension-specific lengthscales:
 $$\mathbf{\Theta} = [\ell_1, \ell_2, \dots, \ell_d]$$
-Optimised via multi-restart L-BFGS-B, ARD automatically expands lengthscales along inactive dimensions and contracts them along sensitive coordinates. This unlocked Function 8's active subspace ($x_1, x_2 \to 0$, $x_5 \to 1.0$), yielding an all-time record $y = 9.981970$ and an exceptional 5-fold cross-validation $R^2 = 0.989$.
+Optimised via multi-restart L-BFGS-B, ARD automatically expands lengthscales along inactive dimensions and contracts them along sensitive coordinates.  This unlocked Function 8's active subspace ($x_1, x_2 \to 0$, $x_5 \to 1.0$), yielding an all-time record $y = 9.981970$ and an exceptional 5-fold cross-validation $R^2 = 0.989$.
 
 ### 2.2 Hybrid Global-Local Candidate Generation (TuRBO-Inspired)
 Pure Monte Carlo candidate generation suffers from the curse of dimensionality, leaving vast coverage voids in 6D to 8D spaces. We implemented a hybrid candidate generator:
@@ -108,8 +108,8 @@ Candidates violating this threshold are automatically pruned, ensuring every wee
 |-- README.md                                # Master project overview, non-technical summary, and documentation
 |-- BBO_Capstone_Walkthrough.ipynb           # Interactive Jupyter Notebook walkthrough presenting method & results
 |-- DATASHEET.md                             # Comprehensive dataset datasheet (Gebru et al. framework, finalised W13)
-|-- MODEL_CARD.md                            # Detailed optimization model card (Mitchell et al. framework, finalised W13)
-|-- bbo.py                                   # Unified, production-grade master optimization engine (CLI-enabled)
+|-- MODEL_CARD.md                            # Detailed optimisation model card (Mitchell et al. framework, finalised W13)
+|-- bbo.py                                   # Unified, production-grade master optimisation engine (CLI-enabled)
 |-- bbo_pipeline.py                          # Legacy weekly pipeline script (preserved for backward compatibility)
 |-- BBO_capstone_project_presentation_v2.pdf # Executive capstone presentation deck (PDF)
 |-- presentation_slides.md                   # Executive capstone presentation slide narratives (Markdown)
@@ -123,7 +123,7 @@ Candidates violating this threshold are automatically pruned, ensuring every wee
 |   |-- initial_inputs.npy                   # Evaluated input coordinate vectors in [0, 1]^d (N = 22 to 52)
 |   `-- initial_outputs.npy                  # Evaluated scalar output values y
 |
-`-- visualizations/                          # Auto-generated diagnostic plots and master dashboard
+`-- visualisations/                          # Auto-generated diagnostic plots and master dashboard
     |-- weekly_progress_summary.png          # 4-panel master weekly dashboard
     |-- function_1_week13.png ...            # 4-panel 2D GP landscape and acquisition maps
     `-- function_8_week13.png                # 4-panel high-D sensitivity slices and feature importances
@@ -133,16 +133,16 @@ Candidates violating this threshold are automatically pruned, ensuring every wee
 
 ## 4. Coding Libraries and Environment Setup
 
-The pipeline is built with standard scientific Python packages optimized for small-sample efficiency and deterministic reproducibility:
+The pipeline is built with standard scientific Python packages optimised for small-sample efficiency and deterministic reproducibility:
 
 * **Core ML & Modeling**: `scikit-learn` (GaussianProcessRegressor, MLPRegressor, RandomForestRegressor, ExtraTreesRegressor, GradientBoostingRegressor, Ridge, Pipeline, StandardScaler).
 * **Statistical Kernels & QMC**: `scipy` (scipy.stats.qmc for Latin Hypercube Sampling, scipy.spatial.distance for de-duplication, normal distributions for Expected Improvement).
 * **Data & Matrix Operations**: `numpy`, `pandas`.
-* **Visualization Engine**: `matplotlib`.
+* **Visualisation Engine**: `matplotlib`.
 
 ### Quickstart Execution
 
-To run the unified optimization engine for the final round (Week 13 / Module 24):
+To run the unified optimisation engine for the final round (Week 13 / Module 24):
 
 ```bash
 # Clone the repository
@@ -156,7 +156,7 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 # Install dependencies
 pip install numpy scipy pandas scikit-learn matplotlib
 
-# Execute the unified master optimization engine (specify week 13)
+# Execute the unified master optimisation engine (specify week 13)
 python bbo.py --week 13
 ```
 
